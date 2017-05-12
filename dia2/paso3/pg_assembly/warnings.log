@@ -1,0 +1,5 @@
+
+=== Error correction and assembling warnings:
+ * 0:01:00.062   236M / 9G    WARN    General                 (kmer_coverage_model.cpp   : 219)   Too many erroneous kmers, the estimates might be unreliable
+ * 0:01:03.513   188M / 9G    WARN    General                 (pair_info_count.cpp       : 338)   Estimated mean insert size 289.034 is very small compared to read length 271
+======= Warnings saved to /lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso3/pg_assembly/warnings.log

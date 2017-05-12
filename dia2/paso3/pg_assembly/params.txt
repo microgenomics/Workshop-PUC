@@ -1,0 +1,35 @@
+Command line: /home/ecastron/programs/SPAdes-3.10.1/bin/spades.py	-1	/lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso2/pass_1.fastq	-2	/lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso2/pass_2.fastq	-t	16	-m	32	-o	/lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso3/pg_assembly	--careful	--cov-cutoff	auto	
+
+System information:
+  SPAdes version: 3.10.1
+  Python version: 2.6.6
+  OS: Linux-2.6.32-573.22.1.el6.x86_64-x86_64-with-centos-6.7-Final
+
+Output dir: /lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso3/pg_assembly
+Mode: read error correction and assembling
+Debug mode is turned OFF
+
+Dataset parameters:
+  Multi-cell mode (you should set '--sc' flag if input data was obtained with MDA (single-cell) technology or --meta flag if processing metagenomic dataset)
+  Reads:
+    Library number: 1, library type: paired-end
+      orientation: fr
+      left reads: ['/lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso2/pass_1.fastq']
+      right reads: ['/lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso2/pass_2.fastq']
+      interlaced reads: not specified
+      single reads: not specified
+Read error correction parameters:
+  Iterations: 1
+  PHRED offset will be auto-detected
+  Corrected reads will be compressed (with gzip)
+Assembly parameters:
+  k: automatic selection based on read length
+  Repeat resolution is enabled
+  Mismatch careful mode is turned ON
+  MismatchCorrector will be used
+  Coverage cutoff is turned ON and threshold will be auto-detected
+Other parameters:
+  Dir for temp files: /lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso3/pg_assembly/tmp
+  Threads: 16
+  Memory limit (in Gb): 32
+

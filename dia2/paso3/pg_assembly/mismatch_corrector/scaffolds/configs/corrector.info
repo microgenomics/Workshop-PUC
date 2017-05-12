@@ -1,0 +1,6 @@
+"bwa": "/home/ecastron/programs/SPAdes-3.10.1/bin/bwa-spades"
+"dataset": "/lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso3/pg_assembly/input_dataset.yaml"
+"max_nthreads": !!int "16"
+"output_dir": "/lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso3/pg_assembly/mismatch_corrector/scaffolds"
+"strategy": "mapped_squared"
+"work_dir": "/lustre/groups/cbi/ecastron/Sandro/workshop_uc/dia2/paso3/pg_assembly/tmp/corrector_p0VwXy"
