@@ -1,4 +1,4 @@
-#Preprocesamiento de datos propios, Control de calidad. Análisis básicos en R
+# Preprocesamiento de datos propios, Control de calidad. Análisis básicos en R
 
 En este práctico aprenderemos los pasos esenciales que se deben realizar para obtener un buen ensamble a partir de lecturas de una secuenciación (reads), se debe tener en cuenta que mientras más buena sea una secuenciación, mejor será su ensamble.
 
@@ -14,7 +14,7 @@ Requisitos:
 * R >= v3.3.1
 	* ggplot2
 
-###Paso 1: Revisar calidad de los reads
+### Paso 1: Revisar calidad de los reads
 
 El primer paso (siempre), antes de trabajar con reads es obtener algunas estadísticas que nos dirán que tan bien resulto nuestra secuenciación, para esto usaremos FastQC, un programa escrito en java y que rapidamente nos puede otorgar estadisticas acerca del estado de nuestros reads.
 
@@ -35,7 +35,7 @@ detalle completo: ![aqui](../images/pg_R1_antes.html)
 
 Para todas estas correcciones, usaremos "prinseq"
 
-###Paso 2: Control de calidad
+### Paso 2: Control de calidad
 prinseq es un software open source escrito en perl famoso por su versatilidad en el manejo de reads.
 
 Directo al grano
@@ -78,7 +78,7 @@ y también el numero anormal de k-mers
 
 en otras palabras, hemos hecho el control de calidad (QC) a nuestras reads. Hurra!
 
-##Paso 3: Ensamble
+## Paso 3: Ensamble
 Ensamblar un genoma se refiere a la union de todas las reads en un super read muy largo llamado "Contig", y a su vez, estos contigs se tratan de unir en contigs aun mas largos llamados "scaffolds".
 
 **Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria a menos que sea secuenciada con mas de una tecnología.**
@@ -163,7 +163,7 @@ y obtendremos el siguiente resultado:
 		#finalmente salimos de la carpeta paso3
 		cd ..
 
-##Paso 4: Mapeo y obtención de coverage
+## Paso 4: Mapeo y obtención de coverage
 
 El termino Coverage (Cobertura) se define como el número de reads que cubren una base, es decir número de veces que se ha secuenciado una base.
 
