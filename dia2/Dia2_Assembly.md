@@ -16,7 +16,7 @@ Requisitos:
 
 ### Paso 1: Revisar calidad de los reads
 
-El primer paso (siempre), antes de trabajar con reads es obtener algunas estadísticas que nos dirán que tan bien resulto nuestra secuenciación, para esto usaremos FastQC, un programa escrito en java y que rapidamente nos puede otorgar estadisticas acerca del estado de nuestros reads.
+El primer paso (siempre), antes de trabajar con reads es obtener algunas estadísticas que nos dirán que tan bien resulto nuestra secuenciación, para esto usaremos FastQC, un programa escrito en java y que rápidamente nos puede otorgar estadísticas acerca del estado de nuestros reads.
 
 	#crearemos una carpeta llamada paso1
 	mkdir paso1
@@ -31,7 +31,7 @@ El %GC lo usamos para corroborar que lo que se secuenció sea efectivamente lo q
 Al principio y al final de nuestros reads se nota un aumento en la frecuencia de k-mers (errores de secuenciación?)
 ![](../images/fastqc3.png)
 
-detalle completo: ![aqui](../images/pg_R1_antes.html)
+detalle completo: ![aquí](../images/pg_R1_antes.html)
 
 Para todas estas correcciones, usaremos "prinseq"
 
@@ -44,7 +44,7 @@ Directo al grano
 	mkdir paso2
 	#entramos en la carpeta
 	cd paso2
-	#y acontinuación ejecutamos la linea de comando:
+	#y acontinuación ejecutamos la línea de comando:
 	prinseq-lite.pl -fastq ../paso1/pg_R1.fastq -fastq2 ../paso1/pg_R2.fastq -out_good pass -out_bad null -trim_left 10 -trim_right 20 -trim_qual_right 20 -min_len 75 -trim_qual_window 15  -trim_qual_step 5 -ns_max_n 0
 	#salimos de la carpeta paso2
 	cd ..
@@ -54,10 +54,10 @@ Donde:
 * -fastq es el nombre del primer archivo fastq.
 * -fastq2 es el nombre del segundo archivo fastq.
 * -out\_good imprime solo las secuencias que pasan el control de calidad que se ha establecido.
-* -out\_bad imprime las secuencias que no pasaron el control de calidad, como en este es null, no se imprimiran).
+* -out\_bad imprime las secuencias que no pasaron el control de calidad, como en este es null, no se imprimirán).
 * -trim\_left corta N bases a la izquierda de la secuencia.
 * -trim\_right corta N bases a la derecha de la secuencia
-* -trim\_qual\_right corta bases a la derecha hazta que se encuentre con una calidad superior a la especificada.
+* -trim\_qual\_right corta bases a la derecha hasta que se encuentre con una calidad superior a la especificada.
 * -min_len filtra las reads por un tamaño N
 * -trim\_qual\_window es el numero de bases en los que se trabajará para revisar la calidad 
 * -trim\_qual\_step cuantas bases avanzara la ventana de trim\_qual\_windows
@@ -79,7 +79,7 @@ y también el numero anormal de k-mers
 en otras palabras, hemos hecho el control de calidad (QC) a nuestras reads. Hurra!
 
 ## Paso 3: Ensamble
-Ensamblar un genoma se refiere a la union de todas las reads en un super read muy largo llamado "Contig", y a su vez, estos contigs se tratan de unir en contigs aun mas largos llamados "scaffolds".
+Ensamblar un genoma se refiere a la unión de todas las reads en un súper read muy largo llamado "Contig", y a su vez, estos contigs se tratan de unir en contigs aun mas largos llamados "scaffolds".
 
 **Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria a menos que sea secuenciada con mas de una tecnología.**
 
@@ -99,11 +99,11 @@ Done:
 * -m es la memoria RAM que especificamos a SPAdes
 * -o es el output de nuestro ensamble (carpeta donde estarán los resultados
 * --careful parámetro para reducir el número de reads mal ensambladas
-* --cov-cutoff es un limite de coverage que aceptaremos, valores inferiores seran descartados
+* --cov-cutoff es un limite de coverage que aceptaremos, valores inferiores serán descartados
 	
-Una vez terminado el ensamble, nuestros scaffolds estan en la carpeta pg_assembly (creada por SPAdes) en el archivo llamado scaffolds.fasta
+Una vez terminado el ensamble, nuestros scaffolds están en la carpeta pg_assembly (creada por SPAdes) en el archivo llamado scaffolds.fasta
 
-aqui haremos una pequeña limpieza y eliminar todos aquellos contigs que tengan menos de 500 bases.
+aquí haremos una pequeña limpieza y eliminar todos aquellos contigs que tengan menos de 500 bases.
 
 para ello ejecutaremos el siguiente comando:
 
@@ -115,7 +115,7 @@ para ello ejecutaremos el siguiente comando:
 	
 Listo!, tenemos nuestro genoma ensamblado. Ya solo nos queda evaluar que tan bien salió.
 
-para esto usaremos Quast, un sofware escrito en python que genera reportes estadísticos de ensambles:
+para esto usaremos Quast, un software escrito en python que genera reportes estadísticos de ensambles:
 	
 	quast.py -t 16 pg_assembly/filter500.fasta 
 
@@ -181,13 +181,13 @@ Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El 
 
 	bowtie2 -x pg_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg.sam --end-to-end --very-sensitive
 
-Esto nos dara un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aqui puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Por lo pronto, necesitamos transformar el formato SAM a BAM (Binary Aligment Map):
+Esto nos dará un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Por lo pronto, necesitamos transformar el formato SAM a BAM (Binary Aligment Map):
 
 	samtools view -b -S pg.sam |samtools sort -@16 > pg.bam
 	#now get the coverage per bp
 	genomeCoverageBed -ibam pg.bam -g ../paso3/pg_assembly/filter500.fasta -d > all.txt
 	
-all.txt tiene el coverage por nucleotido a lo largo de nuestro genoma, asi que, estamos listos para graficar!, para eso solo copia este feo pero util codigo en Rstudio y ejecútalo.
+all.txt tiene el coverage por nucleótido a lo largo de nuestro genoma, así que, estamos listos para graficar!, para eso solo copia este feo pero útil código en Rstudio y ejecútalo.
 
 	library(ggplot2)
 
@@ -226,6 +226,6 @@ all.txt tiene el coverage por nucleotido a lo largo de nuestro genoma, asi que, 
 	  scale_y_continuous(limits = c(0, maxy))+
 	  ggtitle("Coverage Across Reference")
 	  
-Esto dara como resultado el siguiente gráfico:
+Esto dará como resultado el siguiente gráfico:
 ![](../images/coverage_denovo.png)
 Como vemos, el coverage a lo largo del genoma es homogéneo salvo algunas zonas pequeñas, quizás puede haber algo interesante allí.
