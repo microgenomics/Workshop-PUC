@@ -87,7 +87,7 @@ Ya obtenidas nuestras reads de confianza, el siguiente paso es ensamblarlas. Ens
 
 **Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria (o algún otro organismo) a menos que sea secuenciada con mas de una tecnología.**
 
-Para esto usaremos un software llamado SPAdes, un software desarrollado en python que mediante gráficos de brujin (haciendo uso de kmers), ensambla nuestras reads. Debemos tener en cuenta que el proceso de ensamble requiere mucha memoria RAM, aproximadamente unos 8GB para pequeñas secuenciaciones, y en este caso se necesitan 16GB de RAM, es por esto que al final de este paso te damos el ensamble hecho!:
+Para esto usaremos un software llamado SPAdes, un software desarrollado en python que mediante gráficos de brujin (haciendo uso de kmers), ensambla nuestras reads. Debemos tener en cuenta que el proceso de ensamble requiere mucha memoria RAM, aproximadamente unos 8GB para pequeñas secuenciaciones, y en este caso se necesitan 16GB de RAM, **es por esto que al final de este paso te damos el ensamble hecho!** :
 
 	#crear carpeta paso3
 	mkdir paso3
@@ -154,6 +154,9 @@ total_contigs #67
 ######################################################
 #primero obtendremos el largo de cada uno de nuestros contigs
 largo_contigs<-sapply(myassembly,function(x){length(x)})
+#podemos graficar rapidamente como es la distribución del largo
+plot(largo_contigs)
+#y podemos guardar este gráfico en el boton Export del lado derecho de Rstudio, justo arriba del gráfico.
 #ahora sumaremos todos los largos
 largo_total<-sum(largo_contigs)
 largo_total #2268869
@@ -172,7 +175,7 @@ gccontent #0.4845348
 ####################
 #N50 es un número estadístico que nos mide la calidad de un ensamble, se define como: Dado un numero X de contigs ordenados de mayor a menor, el N50 es el largo del contig cuya suma con los contigs anteriores se obtiene el 50% del largo total del genoma.
 #de acuerdo a lo anterior, el primer paso sería ordenar los contigs de mayor a menor, pero SPAdes ya lo hizo por nosotros :D.
-#el segundo paso es entonces obtener la mitad de nuestro genoma.
+#el segundo paso es entonces obtener el 50% de nuestro genoma.
 mitad<-largo_total/2
 mitad #1134434
 
@@ -204,14 +207,13 @@ L50 #11
 #En este caso 11 contigs componen el 50% del genoma, esto es bueno ya que tenemos al menos la mitad del genoma en unos pocos contigs.
 
 ```
+Estas son solo algunas estadísticas básicas, también existen otras como el N90 (largo del contig cuya suma con el resto otorga el 90% del largo del genoma), L90 (suma de contigs que obtienen el N90), N's por cada 100kb, etc. Por el momento, estas son suficientes para concluir que tenemos un buen ensamble. Ya solo falta saber cuantas veces esta cubierto nuestro genoma.
 
 ## Paso 5: Alineamiento de reads y obtención de coverage
 
-El termino Coverage (Cobertura) se define como el número de reads que cubren una base, es decir número de veces que se ha secuenciado una base.
+El termino Coverage (Cobertura) se define como el número de reads que cubren una base, es decir número de veces que se ha secuenciado una base. Esta es una medida de calidad avanzada que nos dirá (dada la definición anterior), cuantas veces hemos secuenciado nuestro genoma.
 
-¿Recuerdan las reads filtradas del paso 2?, las alinearemos con nuestro genoma ensamblado para saber cuantas veces se ha cubierto con nuestras reads, es decir cuanto coverage tiene nuestro ensamble.
-
-para esto usaremos Bowtie2, un alineador muy rápido y flexible (además de usar eficientemente la memoria). Para ello primero necesitamos indexar nuestro genoma (convertirlo en un formato que bowtie2 pueda leer):
+¿Recuerdan las reads filtradas del paso 2?, las alinearemos con nuestro genoma ensamblado para saber cuantas veces se ha cubierto con nuestras reads, para esto usaremos Bowtie2, un alineador muy rápido y flexible (además de usar eficientemente la memoria). Para ello primero necesitamos indexar nuestro genoma (convertirlo en un formato que bowtie2 pueda leer):
 
 	#primero crearemos una carpeta para este cuarto paso
 	mkdir paso4
@@ -229,9 +231,11 @@ Esto nos dará un archivo SAM (Sequence Aligment Map) con toda la información d
 	#now get the coverage per bp
 	genomeCoverageBed -ibam pg.bam -g ../paso3/pg_assembly/filter500.fasta -d > all.txt
 	
-all.txt tiene el coverage por nucleótido a lo largo de nuestro genoma, así que, estamos listos para graficar!, para eso solo copia este feo pero útil código en Rstudio y ejecútalo.
+all.txt tiene el coverage por nucleótido a lo largo de nuestro genoma, así que, estamos listos para graficar!, para eso solo copia este feo pero útil código en Rstudio y ejecútalo (pero ajústalo para que la ruta al archivo all.txt sea la correcta).
 
 	library(ggplot2)
+
+	alltxtPath<-"paso4/all.txt"
 
 	slidingwindowplot <- function(windowsize, inputseq) {
 	  starts <- seq(1, length(inputseq)-windowsize, by = windowsize)
@@ -251,7 +255,7 @@ all.txt tiene el coverage por nucleótido a lo largo de nuestro genoma, así que
 	binSize<-1000
 	maxy<-max(df$sd)+10
 	column.types <- c("character", "numeric", "numeric")
-	all.data <- read.csv("all.txt", header=FALSE, sep="\t",colClasses=column.types)
+	all.data <- read.csv(alltxtPath, header=FALSE, sep="\t",colClasses=column.types)
 	myvector_all<-as.vector(as.matrix(all.data[3]))
 	windowAll<-slidingwindowplot(binSize,myvector_all)
 	df<-data.frame(windowAll[[1]],windowAll[[2]],windowAll[[3]])
@@ -270,4 +274,4 @@ all.txt tiene el coverage por nucleótido a lo largo de nuestro genoma, así que
 	  
 Esto dará como resultado el siguiente gráfico:
 ![](../images/coverage_denovo.png)
-Como vemos, el coverage a lo largo del genoma es homogéneo salvo algunas zonas pequeñas, quizás puede haber algo interesante allí.
+Como vemos, el coverage a lo largo del genoma es homogéneo salvo algunas zonas pequeñas, y de acuerdo a la definición de este, tenemos que nuestro genoma esta cubierto aproximadamente 190 veces, un muy buen resultado.
