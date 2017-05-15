@@ -31,7 +31,7 @@ El %GC lo usamos para corroborar que lo que se secuenció sea efectivamente lo q
 Al principio y al final de nuestros reads se nota un aumento en la frecuencia de k-mers (errores de secuenciación?)
 ![](../images/fastqc3.png)
 
-detalle completo: ![aquí](https://github.com/microgenomics/Workshop-PUC/blob/master/images/pg_R1_antes.html)
+Para ver el detalle completo puedes descargarlo: ![aquí](../checkpoints/paso2/pg_R1_antes.html.zip)
 
 Para todas estas correcciones, usaremos "prinseq"
 
