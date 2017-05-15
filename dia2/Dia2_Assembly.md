@@ -1,6 +1,6 @@
 # Preprocesamiento de datos propios, Control de calidad. Análisis básicos en R
 
-En este práctico aprenderemos los pasos esenciales que se deben realizar para obtener un buen ensamble a partir de lecturas de una secuenciación (reads), se debe tener en cuenta que mientras más buena sea una secuenciación, mejor será su ensamble.
+En este práctico aprenderemos los pasos esenciales que se deben realizar para obtener un buen ensamble, tanto si lo hacemos *denovo* o si utilizamos una *referencia*, a partir de lecturas de una secuenciación (**reads**). Se debe tener en cuenta que mientras más buena sea una secuenciación, mejor será su ensamble.
 
 Requisitos:
 
@@ -11,32 +11,36 @@ Requisitos:
 * Bowtie2 >= v2.2.9
 * Samtools >= v1.3.1
 * Bedtools >= v2.26.0
+* Prokka >= v1.12
 * R >= v3.3.1
 	* ggplot2
+* Reads: Si no tienes lecturas de secuenciación, puedes descargar las que se usaron en este workshop [aquí](#)
 
 ### Paso 1: Revisar calidad de los reads
 
-El primer paso (siempre), antes de trabajar con reads es obtener algunas estadísticas que nos dirán que tan bien resulto nuestra secuenciación, para esto usaremos FastQC, un programa escrito en java y que rápidamente nos puede otorgar estadísticas acerca del estado de nuestros reads.
+El primer paso (siempre), antes de trabajar con reads es obtener algunas estadísticas que nos dirán que tan bien resultó nuestra secuenciación, para esto usaremos FastQC, un programa escrito en java y que rápidamente nos puede otorgar estadísticas acerca del estado de nuestros reads.
 
 	#crearemos una carpeta llamada paso1
 	mkdir paso1
-	#copia tus secuencias dentro de la carpeta paso1
-	Abrir fastQC.
+	#mueve tus secuencias a la carpeta paso1
+	#puedes hacerlo arrastrando los archivos a la carpeta como una persona normal, o puedes usar la terminal de tu computadora como los creadores del ramsomware que infectó a Movistar hace unos días.
+	mv *.fastq paso1/.
+	#Abrir fastQC
 	File -> Open -> seleccionar pg_R1.fastq y pg_R2.fastq.
 
-La principal ventana que nos interesa es la calidad que tiene nuestra secuenciación, y en general, una calidad (Q) sobre 20 se considera buena.
+Aunque en este paso solo veremos algunas secciones del reporte, al final dejaremos el archivo disponible para que puedas descargarlo y analizarlo con mas tiempo. Ahora la principal ventana que nos interesa es la calidad que tiene nuestra secuenciación, y en general, una calidad (Q) sobre 20 se considera buena, ¿porqué?: El valor Q se define como una propiedad que está logaritmicamente relacionada con la probabilidad de que una base nucleotídica sea mal secuenciada, Q = -10log(P). Así, un valor Q   de 20 significaría un error de 1 base cada 100, dando una precisión del 99%. y viendo nuestro reporte, tenemos una buena secuenciación.
 ![](../images/fastqc1.png)
-El %GC lo usamos para corroborar que lo que se secuenció sea efectivamente lo que queremos, para eso, ambas curvas (teórica y real), deben ser similares.
+Otro aspecto que vale la pena revisar es el **%GC** (contenido Guanina-Citosina), un valor usado para clasificar organismos y en este caso para corroborar que lo que se secuenció sea efectivamente lo que queremos, para eso ambas curvas (teórica y real), deben ser similares y de un solo peak.
 ![](../images/fastqc2.png)
-Al principio y al final de nuestros reads se nota un aumento en la frecuencia de k-mers (errores de secuenciación?)
+FastQC en este caso nos dice que hay algo malo con el contenido de Kmer (un Kmer se puede definir como todos los sub-read de nuestro read de largo definido y usado en diferentes aplicaciones. [Para ver mas información acerca de los Kmer pinche aquí](https://en.wikipedia.org/wiki/K-mer)).
+
+Volviendo a lo nuestro, al principio y al final de nuestros reads se nota un aumento en la frecuencia de k-mers (errores de secuenciación?), este comportamiento es frecuente cuando se secuencia con tecnología illumina y puede ser corregido haciendo un pequeño corte en los extremos de las secuencias.
 ![](../images/fastqc3.png)
 
-Para ver el detalle completo puedes descargarlo: [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/checkpoints/paso2/pg_R1_antes.html.zip)
-
-Para todas estas correcciones, usaremos "prinseq"
+Para ver en detalle el reporte completo puedes descargarlo [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso1/pg_R1_antes.html.zip)
 
 ### Paso 2: Control de calidad
-prinseq es un software open source escrito en perl famoso por su versatilidad en el manejo de reads.
+Para realizar las correcciones que observamos en el paso 1, usaremos "prinseq", un software open source escrito en perl famoso por su versatilidad en el manejo de reads.
 
 Directo al grano
 	
@@ -44,7 +48,7 @@ Directo al grano
 	mkdir paso2
 	#entramos en la carpeta
 	cd paso2
-	#y acontinuación ejecutamos la línea de comando:
+	#y a continuación ejecutamos la línea de comando:
 	prinseq-lite.pl -fastq ../paso1/pg_R1.fastq -fastq2 ../paso1/pg_R2.fastq -out_good pass -out_bad null -trim_left 10 -trim_right 20 -trim_qual_right 20 -min_len 75 -trim_qual_window 15  -trim_qual_step 5 -ns_max_n 0
 	#salimos de la carpeta paso2
 	cd ..
@@ -63,27 +67,27 @@ Donde:
 * -trim\_qual\_step cuantas bases avanzara la ventana de trim\_qual\_windows
 * -ns\_max\_n número máximo de Ns permitidas.
 
-Las reads que pasan el control de calidad, son puestas en un nuevo archivo llamado **pass\_1.fastq, pass\_2.fastq, pass\_1\_singletons.fastq y pass\_2\_singletons.fastq**, pero a nosotros solo nos interesa los archivos que tengan las lecturas emparejadas
+Las reads que pasan el control de calidad, son puestas automáticamente en un nuevo archivo llamado **pass\_1.fastq, pass\_2.fastq, pass\_1\_singletons.fastq y pass\_2\_singletons.fastq**, pero a nosotros solo nos interesa los archivos que tengan las lecturas emparejadas, es decir: **pass\_1.fastq, pass\_2.fastq**.
 
-Ahora podemos ver el estado de las reads que pasaron el filtro:
+Ahora podemos ver el estado de las reads que pasaron el filtro y compararlas con las del paso 1 haciendo una especie de fotografía  antes y después:
 
 	Abrir fastQC.
-	File -> Open -> seleccionar pass_1.fastq y pass_2,fastq
+	File -> Open -> seleccionar pass_1.fastq y pass_2.fastq
 
-Vemos que el número de bases de mala calidad se ha reducido
+Vemos que el número de bases de mala calidad se ha reducido, tiene sentido ya que le dimos la instrucción a prinseq para cortar las reads que no cumplan con un valor Q=20.
 ![](../images/fastqc4.png)
 
-y también el numero anormal de k-mers
+El número anormal de kmers también desapareció con el tratamiento y aunque aun existe un tendencia en el aumento de frecuencia de estos al final del gráfico, el orden de magnitud fue ampliamente reducido en comparación con el "antes".
 ![](../images/fastqc5.png)
 
-en otras palabras, hemos hecho el control de calidad (QC) a nuestras reads. Hurra!
+en otras palabras, hemos hecho el control de calidad (QC) a nuestras reads. Hurra!, si quieres revisar en detalle como resultó el proceso puedes descargar el archivo pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso2/pg_R1_despues.html.zip)
 
 ## Paso 3: Ensamble
-Ensamblar un genoma se refiere a la unión de todas las reads en un súper read muy largo llamado "Contig", y a su vez, estos contigs se tratan de unir en contigs aun mas largos llamados "scaffolds".
+Ya obtenidas nuestras reads de confianza, el siguiente paso es ensamblarlas. Ensamblar un genoma se refiere a la unión de todas las reads en un súper read muy largo llamado "Contig", y a su vez, estos contigs se tratan de unir en contigs aun mas largos llamados "scaffolds", todo esto con el fin de obtener el cromosoma completo de nuestro organismo.
 
-**Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria a menos que sea secuenciada con mas de una tecnología.**
+**Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria (o algún otro organismo) a menos que sea secuenciada con mas de una tecnología.**
 
-Para esto usaremos un software llamado SPAdes el cual funciona de la siguiente manera:
+Para esto usaremos un software llamado SPAdes, un software desarrollado en python que mediante gráficos de brujin (haciendo uso de kmers), ensambla nuestras reads. Debemos tener en cuenta que el proceso de ensamble requiere mucha memoria RAM, aproximadamente unos 8GB para pequeñas secuenciaciones, y en este caso se necesitan 16GB de RAM, es por esto que al final de este paso te damos el ensamble hecho!:
 
 	#crear carpeta paso3
 	mkdir paso3
@@ -101,7 +105,7 @@ Done:
 * --careful parámetro para reducir el número de reads mal ensambladas
 * --cov-cutoff es un limite de coverage que aceptaremos, valores inferiores serán descartados
 	
-Una vez terminado el ensamble, nuestros scaffolds están en la carpeta pg_assembly (creada por SPAdes) en el archivo llamado scaffolds.fasta
+Una vez terminado el ensamble (despues de alrededor de 30 minutos dependiendo del PC), nuestros scaffolds están en la carpeta pg_assembly (creada por SPAdes) en el archivo llamado scaffolds.fasta
 
 aquí haremos una pequeña limpieza y eliminar todos aquellos contigs que tengan menos de 500 bases.
 
@@ -113,57 +117,95 @@ para ello ejecutaremos el siguiente comando:
 	#salir de la carpeta del ensamble
 	cd ..
 	
-Listo!, tenemos nuestro genoma ensamblado. Ya solo nos queda evaluar que tan bien salió.
+Listo!, tenemos nuestro genoma ensamblado. Si no pudiste obtener tu ensamble por falta de recursos, puedes descargar el resultado de este paso pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pg_assembly/filter500.fasta).
 
-para esto usaremos Quast, un software escrito en python que genera reportes estadísticos de ensambles:
-	
-	quast.py -t 16 pg_assembly/filter500.fasta 
 
-Donde:
+#Paso 4: Estadísticas básicas
 
-* -t es el número hilos que usara la CPU para generar nuestro reporte.
+Ya solo nos queda evaluar que tan bien salió nuestro ensamble. Para esto utilizaremos Rstudio, una interfaz gráfica para el código R con el que manipularemos nuestro ensamble, esto mediante la libreria "ape".
 
-esto creará un nuevo directorio llamado "quast_results" y dentro de ello una carpeta llamada results\_XXXXXXXX (donde XXXXXXX es la fecha actual de ejecución de quast), la cual contiene nuestro reporte. Accederemos al reporte con un simple comando unix "cat"
+	#primero creamos una carpeta para guardar los resultados de este paso
+	mkdir paso4
+	#ingresamos a la carpeta paso4
+	cd paso4
 
-	cat quast_results/results_2017_05_11_17_58_46/report.txt
+Ahora abre Rstudio y crea un nuevo R script.
+![](../images/rstudio.png)
 
-y obtendremos el siguiente resultado:
+copia y pega el siguiente código en tu hoja en blanco y sigamos pero ahora desde el script.
 
-	All statistics are based on contigs of size >= 500 bp, unless otherwise noted (e.g., "# contigs (>= 0 bp)" and "Total length (>= 0 bp)" include all contigs).
+```
+library(ape)
 
-	Assembly                    filter500
-	# contigs (>= 0 bp)         67       
-	# contigs (>= 1000 bp)      56       
-	# contigs (>= 5000 bp)      51       
-	# contigs (>= 10000 bp)     45       
-	# contigs (>= 25000 bp)     32       
-	# contigs (>= 50000 bp)     14       
-	Total length (>= 0 bp)      2268869  
-	Total length (>= 1000 bp)   2261939  
-	Total length (>= 5000 bp)   2247304  
-	Total length (>= 10000 bp)  2208718  
-	Total length (>= 25000 bp)  1986915  
-	Total length (>= 50000 bp)  1371208  
-	# contigs                   67       
-	Largest contig              210009   
-	Total length                2268404  
-	GC (%)                      48.45    
-	N50                         75957    
-	N75                         32834    
-	L50                         11       
-	L75                         22       
-	# N's per 100 kbp           21.56 
-	
-* En total son 67 contigs (contigs >= 0 bp), un valor muy bueno si consideramos que solo mandamos a secuenciar una sola vez nuestra bacteria y en la práctica, este valor es más alto.
-* La cantidad total de bases también es buena en este caso, 2,268,869 (Total length) que se acerca mucho a los 2,354,886 que tiene el genoma de referencia de esta bacteria (Porphyromonas gingivalis ATCC 33277).
-* El %GC de nuestro genoma también es un indicador que podemos usar para comprobar la similitud de nuestro genoma en este aspecto. 48.45% vs 48.4% es muy bueno.
-* N50 es un número estadístico que nos mide la calidad de un ensamble, se define como: **Dado un numero X de contigs ordenados de mayor a menor, el N50 es el largo del contig cuya suma con los contigs anteriores se obtiene el 50% del largo total del genoma.** Y en este caso, tener un contig de largo 75957 es un buen indicador para nuestro ensamble.
-* L50 es el número contigs que forman el N50. En este caso 11 contigs componen el 50% del genoma, esto es bueno ya que tenemos al menos la mitad del genoma en unos pocos contigs.
+#cambiamos la ruta de nuestro ensamble de acuerdo nuestro caso.
+MyAssemblyPath<-"~/Desktop/Workshop-PUC/dia2/paso3/pg_assembly/filter500.fasta"
 
-		#finalmente salimos de la carpeta paso3
-		cd ..
+myassembly<-read.dna(MyAssemblyPath,format = "fasta",as.character = T)
 
-## Paso 4: Mapeo y obtención de coverage
+##################################################
+#calcular el total de contigs de nuestro ensamble#
+##################################################
+total_contigs<-length(myassembly)
+total_contigs #67
+#En total son 67 contigs, un valor muy bueno si consideramos que nuestra muestra solo se ha secuenciado una sola vez nuestra bacteria y en la práctica, este valor es más alto.
+
+######################################################
+#calcular el largo total (en bp), de nuestro ensamble#
+######################################################
+#primero obtendremos el largo de cada uno de nuestros contigs
+largo_contigs<-sapply(myassembly,function(x){length(x)})
+#ahora sumaremos todos los largos
+largo_total<-sum(largo_contigs)
+largo_total #2268869
+#La cantidad total de bases también es buena en este caso, 2,268,869 (Total length) que se acerca mucho a los 2,354,886 que tiene el genoma de referencia de esta bacteria (Porphyromonas gingivalis ATCC 33277).
+
+
+##################################
+#calcular %GC de nuestro ensamble#
+##################################
+gccontent<-GC.content(as.DNAbin(myassembly))
+gccontent #0.4845348
+#El %GC de nuestro genoma también es un indicador que podemos usar para comprobar la similitud de nuestro genoma en este aspecto. 48.45% vs 48.4% (referencia) es muy bueno.
+
+####################
+#calcular valor N50#
+####################
+#N50 es un número estadístico que nos mide la calidad de un ensamble, se define como: Dado un numero X de contigs ordenados de mayor a menor, el N50 es el largo del contig cuya suma con los contigs anteriores se obtiene el 50% del largo total del genoma.
+#de acuerdo a lo anterior, el primer paso sería ordenar los contigs de mayor a menor, pero SPAdes ya lo hizo por nosotros :D.
+#el segundo paso es entonces obtener la mitad de nuestro genoma.
+mitad<-largo_total/2
+mitad #1134434
+
+#el ultimo paso es ir sumando los contigs hasta obtener por lo menos el valor de 1134434 (mitad)
+acumulacion<-0
+for(N50 in largo_contigs){
+  acumulacion<- acumulacion + N50
+  if(acumulacion>=mitad){
+    break
+  }
+}
+N50 #75957
+# En este caso, nuestro N50 sería: 75957. esta medida debemos complementarla con un valor L50, que nos dice cuantos contigs forman el N50.
+
+####################
+#calcular valor L50#
+####################
+acumulacion<-0
+L50<-1
+for(N50 in largo_contigs){
+  acumulacion<- acumulacion + N50
+  if(acumulacion>=mitad){
+    break
+  }
+  L50<-L50+1
+}
+L50 #11
+
+#En este caso 11 contigs componen el 50% del genoma, esto es bueno ya que tenemos al menos la mitad del genoma en unos pocos contigs.
+
+```
+
+## Paso 5: Alineamiento de reads y obtención de coverage
 
 El termino Coverage (Cobertura) se define como el número de reads que cubren una base, es decir número de veces que se ha secuenciado una base.
 
