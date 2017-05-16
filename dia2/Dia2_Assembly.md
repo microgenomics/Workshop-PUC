@@ -82,7 +82,14 @@ El número anormal de kmers también desapareció con el tratamiento y aunque au
 
 en otras palabras, hemos hecho el control de calidad (QC) a nuestras reads. Hurra!, si quieres revisar en detalle como resultó el proceso puedes descargar el archivo pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso2/pg_R1_despues.html.zip)
 
-## Paso 3: Ensamble
+##Paso 3: Ensamble
+En simples palabras cuando se tienen reads ya procesadas, uno puede escoger entre 2 caminos para obtener un genoma, un ensamble **denovo** o un ensamble **con referencia**:
+
+* **Denovo**: significa que nuestras reads se unieran entre ellas mediante overlapping, hasta formar un super gran read (o varios), que represente el genoma en cuestión.
+* **Con referencia**: aquí nuestras reads se alinearán con algún genoma ya existente usándose como plantilla, obteniéndose un genoma con las mismas características estructurales de la plantilla (posición de genes, largo del genoma, etc).
+
+
+### Paso 3.1: *Denovo*
 Ya obtenidas nuestras reads de confianza, el siguiente paso es ensamblarlas. Ensamblar un genoma se refiere a la unión de todas las reads en un súper read muy largo llamado "Contig", y a su vez, estos contigs se tratan de unir en contigs aun mas largos llamados "scaffolds", todo esto con el fin de obtener el cromosoma completo de nuestro organismo.
 
 **Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria (o algún otro organismo) a menos que sea secuenciada con mas de una tecnología.**
@@ -120,19 +127,18 @@ para ello ejecutaremos el siguiente comando:
 Listo!, tenemos nuestro genoma ensamblado. Si no pudiste obtener tu ensamble por falta de recursos, puedes descargar el resultado de este paso pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pg_assembly/filter500.fasta).
 
 
-#Paso 4: Estadísticas básicas
+###Paso 3.2: Estadísticas básicas para un ensamble denovo
 
 Ya solo nos queda evaluar que tan bien salió nuestro ensamble. Para esto utilizaremos Rstudio, una interfaz gráfica para el código R con el que manipularemos nuestro ensamble, esto mediante la libreria "ape".
 
-	#primero creamos una carpeta para guardar los resultados de este paso
-	mkdir paso4
-	#ingresamos a la carpeta paso4
-	cd paso4
+
+	#ingresamos a la carpeta paso3
+	cd paso3
 
 Ahora abre Rstudio y crea un nuevo R script.
 ![](../images/rstudio.png)
 
-copia y pega el siguiente código en tu hoja en blanco y sigamos pero ahora desde el script.
+copia y pega el siguiente código en tu hoja en blanco y sigamos pero ahora desde el script. Si llegaras a tener problemas con Rstudio, te dejamos el script [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/statistics.R)
 
 ```
 library(ape)
@@ -209,7 +215,10 @@ L50 #11
 ```
 Estas son solo algunas estadísticas básicas, también existen otras como el N90 (largo del contig cuya suma con el resto otorga el 90% del largo del genoma), L90 (suma de contigs que obtienen el N90), N's por cada 100kb, etc. Por el momento, estas son suficientes para concluir que tenemos un buen ensamble. Ya solo falta saber cuantas veces esta cubierto nuestro genoma.
 
-## Paso 5: Alineamiento de reads y obtención de coverage
+###Paso 3.3: Ensamble con referencia
+
+
+## Paso 4: Alineamiento de reads y obtención de coverage
 
 El termino Coverage (Cobertura) se define como el número de reads que cubren una base, es decir número de veces que se ha secuenciado una base. Esta es una medida de calidad avanzada que nos dirá (dada la definición anterior), cuantas veces hemos secuenciado nuestro genoma.
 
@@ -221,7 +230,7 @@ El termino Coverage (Cobertura) se define como el número de reads que cubren un
 	cd paso4
 	bowtie2-build --threads 16 ../paso3/pg_assembly/filter500.fasta pg_index
 
-Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El siguiente paso es alinear los reads:
+Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El siguiente paso es alinear los reads, de cualquier forma, si no lograste indexar el genoma por A B C motivos, pincha [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/pg_index.zip) para descargarlos y ponerlos en la carpeta paso4
 
 	bowtie2 -x pg_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg.sam --end-to-end --very-sensitive
 
@@ -231,11 +240,11 @@ Esto nos dará un archivo SAM (Sequence Aligment Map) con toda la información d
 	#now get the coverage per bp
 	genomeCoverageBed -ibam pg.bam -g ../paso3/pg_assembly/filter500.fasta -d > all.txt
 	
-all.txt tiene el coverage por nucleótido a lo largo de nuestro genoma, así que, estamos listos para graficar!, para eso solo copia este feo pero útil código en Rstudio y ejecútalo (pero ajústalo para que la ruta al archivo all.txt sea la correcta).
-
-	library(ggplot2)
+[all.txt](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/all.txt) tiene el coverage por nucleótido a lo largo de nuestro genoma, así que, estamos listos para graficar!, para eso solo copia este feo pero útil código en Rstudio y ejecútalo (pero ajusta la primera línea para que la ruta al archivo all.txt sea la correcta).
 
 	alltxtPath<-"paso4/all.txt"
+	
+	library(ggplot2)
 
 	slidingwindowplot <- function(windowsize, inputseq) {
 	  starts <- seq(1, length(inputseq)-windowsize, by = windowsize)
@@ -272,6 +281,6 @@ all.txt tiene el coverage por nucleótido a lo largo de nuestro genoma, así que
 	  scale_y_continuous(limits = c(0, maxy))+
 	  ggtitle("Coverage Across Reference")
 	  
-Esto dará como resultado el siguiente gráfico:
+Esto dará como resultado el siguiente gráfico que puedes guardar en la pestaña Export en el cuadro de la derecha de Rstudio:
 ![](../images/coverage_denovo.png)
 Como vemos, el coverage a lo largo del genoma es homogéneo salvo algunas zonas pequeñas, y de acuerdo a la definición de este, tenemos que nuestro genoma esta cubierto aproximadamente 190 veces, un muy buen resultado.
