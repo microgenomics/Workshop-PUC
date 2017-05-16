@@ -83,16 +83,15 @@ El número anormal de kmers también desapareció con el tratamiento y aunque au
 en otras palabras, hemos hecho el control de calidad (QC) a nuestras reads. Hurra!, si quieres revisar en detalle como resultó el proceso puedes descargar el archivo pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso2/pg_R1_despues.html.zip)
 
 ##Paso 3: Ensamble
-En simples palabras cuando se tienen reads ya procesadas, uno puede escoger entre 2 caminos para obtener un genoma, un ensamble **denovo** o un ensamble **con referencia**:
+Ya obtenidas nuestras reads de confianza, el siguiente paso es ensamblarlas. En simples palabras cuando se tienen reads ya procesadas, uno puede escoger entre 2 caminos para obtener un genoma, un ensamble **denovo** o un ensamble **con referencia**:
 
 * **Denovo**: significa que nuestras reads se unieran entre ellas mediante overlapping, hasta formar un super gran read (o varios), que represente el genoma en cuestión.
 * **Con referencia**: aquí nuestras reads se alinearán con algún genoma ya existente usándose como plantilla, obteniéndose un genoma con las mismas características estructurales de la plantilla (posición de genes, largo del genoma, etc).
 
-
 ### Paso 3.1: *Denovo*
-Ya obtenidas nuestras reads de confianza, el siguiente paso es ensamblarlas. Ensamblar un genoma se refiere a la unión de todas las reads en un súper read muy largo llamado "Contig", y a su vez, estos contigs se tratan de unir en contigs aun mas largos llamados "scaffolds", todo esto con el fin de obtener el cromosoma completo de nuestro organismo.
+Ensamblar un genoma *denovo* se refiere a la unión de todas las reads en un súper read muy largo llamado "Contig", y a su vez, estos contigs se tratan de unir en contigs aun mas largos llamados "scaffolds", todo esto con el fin de obtener el cromosoma completo de nuestro organismo.
 
-**Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria (o algún otro organismo) a menos que sea secuenciada con mas de una tecnología.**
+**Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria (o algún otro organismo) a menos que sea secuenciada con mas de una tecnología o se usen diferentes librerías de secuenciación.**
 
 Para esto usaremos un software llamado SPAdes, un software desarrollado en python que mediante gráficos de brujin (haciendo uso de kmers), ensambla nuestras reads. Debemos tener en cuenta que el proceso de ensamble requiere mucha memoria RAM, aproximadamente unos 8GB para pequeñas secuenciaciones, y en este caso se necesitan 16GB de RAM, **es por esto que al final de este paso te damos el ensamble hecho!** :
 
@@ -112,7 +111,7 @@ Done:
 * --careful parámetro para reducir el número de reads mal ensambladas
 * --cov-cutoff es un limite de coverage que aceptaremos, valores inferiores serán descartados
 	
-Una vez terminado el ensamble (despues de alrededor de 30 minutos dependiendo del PC), nuestros scaffolds están en la carpeta pg_assembly (creada por SPAdes) en el archivo llamado scaffolds.fasta
+Una vez terminado el ensamble (alrededor de 30 minutos dependiendo del PC), nuestros scaffolds están en la carpeta pg_assembly (creada por SPAdes) en el archivo llamado scaffolds.fasta
 
 aquí haremos una pequeña limpieza y eliminar todos aquellos contigs que tengan menos de 500 bases.
 
@@ -216,13 +215,39 @@ L50 #11
 Estas son solo algunas estadísticas básicas, también existen otras como el N90 (largo del contig cuya suma con el resto otorga el 90% del largo del genoma), L90 (suma de contigs que obtienen el N90), N's por cada 100kb, etc. Por el momento, estas son suficientes para concluir que tenemos un buen ensamble. Ya solo falta saber cuantas veces esta cubierto nuestro genoma.
 
 ###Paso 3.3: Ensamble con referencia
+Ensamblar reads usando una referencia permite obtener un genoma tan bueno como lo sea la referencia, es decir, nuestras reads solo se acotaran al alineamiento de nuestra referencia y heredará algunas estadísticas básicas como el N50 y L50. Manos a la obra!
+
+Lo primero es descargar un genoma de referencia, en nuestro caso, descargaremos el genoma de [Porphyromonas gingivalis ATCC 33277](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef.fna), si buscas otro genoma puedes consultar [la página web de NCBI](https://www.ncbi.nlm.nih.gov/genome/).
+
+Este genoma de referencia posee las siguientes características:
+
+* scaffolds: 1 
+* N50: 2,354,886 
+* L50: 1
+
+Este genoma tiene 1 solo cromosoma, es decir, no está fragmentado como en el caso de nuestro ensamble *denovo*, te preguntarás entonces ¿Para que quiero obtener "otra vez" este genoma si ya esta completo? - La respuesta es que en tu secuenciación existen patrones que no están en la referencia, desde ese operon que hace super resistente a tu bacteria hasta ese SNP de diferencia que hace a tu bicho un blanco perfecto de vectores, después de todo, ¿tu organismo es especial por algo no?. Veamos que sale!
+
+¿Recuerdan las reads filtradas del paso 2?, las alinearemos en el genoma de referencia, para esto usaremos Bowtie2, un alineador muy rápido y flexible (además de usar eficientemente la memoria), que como único requisito necesita el genoma indexado (convertido en un formato que bowtie2 pueda leer):
+
+	#entramos en la carpeta
+	cd paso3
+	bowtie2-build --threads 16 pgRef.fna pgRef_index
+
+Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El siguiente paso es alinear los reads, de cualquier forma, si no lograste indexar el genoma por A B C motivos, pincha [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef_index.zip) para descargarlos y ponerlos en la carpeta paso3.
+
+	#siguiente paso: alinear
+	bowtie2 -x pgRef_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg.sam --end-to-end --very-sensitive --threads 16
+
+Esto nos dará un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)).
 
 
-## Paso 4: Alineamiento de reads y obtención de coverage
+
+## Paso 4: Obtención de coverage
 
 El termino Coverage (Cobertura) se define como el número de reads que cubren una base, es decir número de veces que se ha secuenciado una base. Esta es una medida de calidad avanzada que nos dirá (dada la definición anterior), cuantas veces hemos secuenciado nuestro genoma.
 
-¿Recuerdan las reads filtradas del paso 2?, las alinearemos con nuestro genoma ensamblado para saber cuantas veces se ha cubierto con nuestras reads, para esto usaremos Bowtie2, un alineador muy rápido y flexible (además de usar eficientemente la memoria). Para ello primero necesitamos indexar nuestro genoma (convertirlo en un formato que bowtie2 pueda leer):
+### Paso 4.1: ***Denovo***
+Parecido en el ensamble con referencia, alinearemos las reads filtradas en el paso 2 con nuestro genoma ensamblado para saber cuantas veces se ha cubierto con nuestras reads, volvemos a usar Bowtie2 para ello. Primero necesitamos indexar nuestro genoma:
 
 	#primero crearemos una carpeta para este cuarto paso
 	mkdir paso4
@@ -230,17 +255,17 @@ El termino Coverage (Cobertura) se define como el número de reads que cubren un
 	cd paso4
 	bowtie2-build --threads 16 ../paso3/pg_assembly/filter500.fasta pg_index
 
-Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El siguiente paso es alinear los reads, de cualquier forma, si no lograste indexar el genoma por A B C motivos, pincha [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/pg_index.zip) para descargarlos y ponerlos en la carpeta paso4
+Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El siguiente paso es alinear los reads, de cualquier forma, si no lograste indexar el genoma por A B C motivos, pincha [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso4/pg_index.zip) para descargarlos y ponerlos en la carpeta paso4
 
-	bowtie2 -x pg_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg.sam --end-to-end --very-sensitive
+	bowtie2 -x pg_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg.sam --end-to-end --very-sensitive --threads 16
 
-Esto nos dará un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Por lo pronto, necesitamos transformar el formato SAM a BAM (Binary Aligment Map):
+Esto nos dará (igual que en el ensamble con referencia), un archivo SAM (Sequence Aligment Map), con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Por lo pronto, necesitamos transformar el formato SAM a BAM (Binary Aligment Map):
 
 	samtools view -b -S pg.sam |samtools sort -@16 > pg.bam
 	#now get the coverage per bp
 	genomeCoverageBed -ibam pg.bam -g ../paso3/pg_assembly/filter500.fasta -d > all.txt
 	
-[all.txt](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/all.txt) tiene el coverage por nucleótido a lo largo de nuestro genoma, así que, estamos listos para graficar!, para eso solo copia este feo pero útil código en Rstudio y ejecútalo (pero ajusta la primera línea para que la ruta al archivo all.txt sea la correcta).
+[all.txt](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso4/all.txt.zip) tiene el coverage por nucleótido a lo largo de nuestro genoma, así que, estamos listos para graficar!, para eso solo copia este feo pero útil código en Rstudio y ejecútalo (pero ajusta la primera línea para que la ruta al archivo all.txt sea la correcta).
 
 	alltxtPath<-"paso4/all.txt"
 	
