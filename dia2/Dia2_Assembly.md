@@ -226,7 +226,7 @@ Este genoma de referencia posee las siguientes características:
 * N50: 2,354,886 
 * L50: 1
 
-Este genoma tiene 1 solo cromosoma, es decir, no está fragmentado como en el caso de nuestro ensamble *denovo*, te preguntarás entonces ¿Para que quiero obtener "otra vez" este genoma si ya esta completo? - La respuesta es que en tu secuenciación existen patrones que no están en la referencia, desde ese operon que hace super resistente a tu bacteria hasta ese SNP de diferencia que hace a tu bicho un blanco perfecto de vectores, después de todo, ¿tu organismo es especial por algo no?. Veamos que sale!
+Si nos fijamos, la referencia solo tiene 1 cromosoma, es decir, no está fragmentado como en el caso de nuestro ensamble *denovo*, te preguntarás entonces ¿Para que quiero obtener "otra vez" este genoma si ya esta completo? - La respuesta es que en tu secuenciación existen patrones que no están en la referencia, desde ese operon que hace super resistente a tu bacteria hasta ese SNP de diferencia que hace a tu bicho un blanco perfecto de vectores, después de todo, ¿tu organismo es especial por algo no?. Veamos que sale!
 
 ¿Recuerdan las reads filtradas del paso 2?, las alinearemos en el genoma de referencia, para esto usaremos Bowtie2, un alineador muy rápido y flexible (además de usar eficientemente la memoria), que como único requisito necesita el genoma indexado (convertido en un formato que bowtie2 pueda leer):
 
@@ -254,6 +254,8 @@ Extraemos el consenso:
 Finalmente transformamos el formato fastq a fasta con este simple script de perl ([pincha aquí para descargar](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/fastq2fasta.pl)).
 
 	perl fastq2fasta.pl -a pg_consensus.fastq > pg_consensus.fasta
+	#salimos de la carpeta
+	cd ..
 	
 Y voilà! tenemos nuestro genoma ensamblado con referencia. Como las estadísticas básicas son heredadas por el genoma de referencia, no hace falta hacerlas de nuevo, esta vez veremos un termino más avanzado, y que sirve para ambos tipos de ensambles, hablamos del "Coverage".
 
