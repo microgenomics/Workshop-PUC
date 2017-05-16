@@ -22,6 +22,8 @@ Requisitos:
 	* ape
 * Reads: Si no tienes lecturas de secuenciación, puedes descargar las que se usaron en este workshop [aquí](#), son de una Porphyromonas gingivalis.
 
+**Recomendación para el curso: siempre ten en cuenta donde estas ubicado en la terminal, así evitaras errores como "no such file or directory"**
+
 ### Paso 1: Revisar calidad de los reads
 
 El primer paso (siempre), antes de trabajar con reads es obtener algunas estadísticas que nos dirán que tan bien resultó nuestra secuenciación, para esto usaremos FastQC, un programa escrito en java y que rápidamente nos puede otorgar estadísticas acerca del estado de nuestros reads.
@@ -99,19 +101,19 @@ Ensamblar un genoma *denovo* se refiere a la unión de todas las reads en un sú
 
 **Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria (o algún otro organismo) a menos que sea secuenciada con mas de una tecnología o se usen diferentes librerías de secuenciación.**
 
-Para esto usaremos un software llamado SPAdes, un software desarrollado en python que mediante gráficos de brujin (haciendo uso de kmers), ensambla nuestras reads. Debemos tener en cuenta que el proceso de ensamble requiere mucha memoria RAM, aproximadamente unos 8GB para pequeñas secuenciaciones, y en este caso se necesitan 16GB de RAM, **es por esto que al final de este paso te damos el ensamble hecho!** :
+Para esto usaremos un software llamado SPAdes, un software desarrollado en python que mediante gráficos de brujin (haciendo uso de kmers), ensambla nuestras reads. Debemos tener en cuenta que el proceso de ensamble requiere mucha memoria RAM, aproximadamente unos 8GB para pequeñas secuenciaciones, **es por esto que al final de este paso te damos el ensamble hecho!** :
 
 	#crear carpeta paso3
 	mkdir paso3
 	#entrar en la carpeta
 	cd paso3
-	spades.py -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -t 16 -m 32 -o pg_assembly --careful --cov-cutoff auto
+	spades.py -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -t 4 -m 8 -o pg_assembly --careful --cov-cutoff auto
 	
 Donde: 
 
 * -1 es la secuencia forward de nuestros reads.
 * -2 es la secuencia reverse de nuestros reads
-* -t es el número de hilos que la CPU de nuestro computador usará
+* -t es el número de hilos que la CPU de nuestro computador usará (si usted tiene un intel core i3 escriba: -t 4, si tiene un i5 o i7 escriba: -t 8)
 * -m es la memoria RAM que especificamos a SPAdes
 * -o es el output de nuestro ensamble (carpeta donde estarán los resultados
 * --careful parámetro para reducir el número de reads mal ensambladas
@@ -428,6 +430,8 @@ veamos que estadísticas nos dice el archivo pg.txt
 	
 prokka encontró en nuestros 67 contigs (archivo .fna), encontró 1931 CDS que podemos encontrar el archivo .faa, 1979 genes que los podemos encontrar en el archivo .ffn. si tienes problemas para obtener la anotación, descárgala pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/pg_annot.zip)
 
-Finalmente podemos visualizar el .gbk con [Artemis](http://www.sanger.ac.uk/science/tools/artemis), un software de Sanger Institute, con el que gráficamente podemos ver el .gff **[click derecho en el gff -> abrir con Artemis]** y buscar algún gen de nuestro interés, o alguna región
+Finalmente podemos visualizar el .gbk con [Artemis](http://www.sanger.ac.uk/science/tools/artemis), un software de Sanger Institute, con el que gráficamente podemos ver el .gff **[click derecho en el gff -> abrir con Artemis]** y buscar algún gen específico, o alguna zona de nuestro interés en el genoma, etc.
 
 ![](../images/artemis.png)
+
+Hurra!, hemos llegado al final de este tutorial, esperamos que te haya servido tanto como a nosotros!, recuerda que puedes consultarnos cualquier duda que tengas. No te pierdas el proximo tutorial acerca de **Fundamentos de técnicas de representación reducida del genoma**.
