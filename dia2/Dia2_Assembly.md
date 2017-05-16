@@ -377,7 +377,7 @@ Ahora estamos listos para graficar!, para eso solo copia este feo pero útil có
 	  
 Esto dará como resultado el siguiente gráfico que puedes guardar en la pestaña Export en el cuadro de la derecha de Rstudio:
 ![](../images/coverage_denovo.png)
-Como vemos, el coverage a lo largo del genoma es homogéneo salvo algunas zonas pequeñas, y de acuerdo a la definición de este, tenemos que nuestro genoma esta cubierto aproximadamente 190 veces, un muy buen resultado.
+Como vemos, el coverage a lo largo del genoma es homogéneo salvo algunas zonas pequeñas, y de acuerdo a la definición de este, tenemos que nuestro genoma esta cubierto aproximadamente 50 veces, un muy buen resultado.
 
 ## Paso 5: Anotación de ensambles
 El proceso de anotación de un genoma (o alguna secuencia), se refiere a localizar algún patron (o muchos), dentro de una secuencia y asignarle un significado cada una de esas secciones para ser interpretada por nosotros.
