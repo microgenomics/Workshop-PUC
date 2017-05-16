@@ -11,6 +11,8 @@ Requisitos:
 * Bowtie2 >= v2.2.9
 * Samtools >= v1.3.1
 * Bedtools >= v2.26.0
+* Bcftools >= v1.3.1
+* seqtk >= v1.0
 * Prokka >= v1.12
 * R >= v3.3.1
 	* ggplot2
@@ -129,7 +131,7 @@ Listo!, tenemos nuestro genoma ensamblado. Si no pudiste obtener tu ensamble por
 
 ### Paso 3.2: Estadísticas básicas para un ensamble denovo
 
-Ya solo nos queda evaluar que tan bien salió nuestro ensamble. Para esto utilizaremos Rstudio, una interfaz gráfica para el código R con el que manipularemos nuestro ensamble, esto mediante la libreria "ape".
+Ya solo nos queda evaluar que tan bien salió nuestro ensamble. Para esto utilizaremos Rstudio, una interfaz gráfica para el código R con el que manipularemos nuestro ensamble, esto mediante la librería "ape".
 
 
 	#ingresamos a la carpeta paso3
@@ -138,7 +140,7 @@ Ya solo nos queda evaluar que tan bien salió nuestro ensamble. Para esto utiliz
 Ahora abre Rstudio y crea un nuevo R script.
 ![](../images/rstudio.png)
 
-copia y pega el siguiente código en tu hoja en blanco y sigamos pero ahora desde el script. Si llegaras a tener problemas con Rstudio, te dejamos el script [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/statistics.R)
+copia y pega el siguiente código en tu hoja en blanco y sigamos pero ahora desde el script. Si llegaras a tener problemas con Rstudio, te dejamos el script [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/statistics.R) para que veas paso a paso.
 
 ```
 library(ape)
@@ -160,9 +162,9 @@ total_contigs #67
 ######################################################
 #primero obtendremos el largo de cada uno de nuestros contigs
 largo_contigs<-sapply(myassembly,function(x){length(x)})
-#podemos graficar rapidamente como es la distribución del largo
+#podemos graficar rápidamente como es la distribución del largo
 plot(largo_contigs)
-#y podemos guardar este gráfico en el boton Export del lado derecho de Rstudio, justo arriba del gráfico.
+#y podemos guardar este gráfico en el botón Export del lado derecho de Rstudio, justo arriba del gráfico.
 #ahora sumaremos todos los largos
 largo_total<-sum(largo_contigs)
 largo_total #2268869
@@ -239,25 +241,42 @@ Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El 
 	#siguiente paso: alinear
 	bowtie2 -x pgRef_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg_ref.sam --end-to-end --very-sensitive --threads 16
 
-Esto nos dará un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Al cual someteremos a una curiosa linea de código que nos dará solo los reads que han alineado con el genoma de referencia y de paso transformamos el formato a BAM para ahorrar espacio.
+Aquí uno tendería a pensar que todas nuestras reads se alinearon, esto no es así:
 
-	samtools view -Sbh -F 0x4 --threads 16 pg_ref.sam |samtools sort -n -@16 > mapped_ref.bam
+	1060210 reads; of these:
+	  1060210 (100.00%) were paired; of these:
+	    203899 (19.23%) aligned concordantly 0 times
+	    807208 (76.14%) aligned concordantly exactly 1 time
+	    49103 (4.63%) aligned concordantly >1 times
+	    ----
+	    203899 pairs aligned concordantly 0 times; of these:
+	      36469 (17.89%) aligned discordantly 1 time
+	    ----
+	    167430 pairs aligned 0 times concordantly or discordantly; of these:
+	      334860 mates make up the pairs; of these:
+	        310032 (92.59%) aligned 0 times
+	        17096 (5.11%) aligned exactly 1 time
+	        7732 (2.31%) aligned >1 times
+	85.38% overall alignment rate
 
-Indexamos el nuevo archivo:
+Tenemos un 85.38% de reads alineadas, el resto probablemente pertenecen a contaminación (que es algo mas común de lo que se piensa), o quizás es alguna sección que no existe en el genoma de referencia y que si existe en el ensamble *denovo*.
 
-	samtools index mapped_ref.bam
+Bowtie2 nos dará como output un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Al cual someteremos a una curiosa linea de código que nos dará solo los reads que han alineado con el genoma de referencia y de paso transformamos el formato a BAM para ahorrar espacio.
 
-Extraemos el consenso:
+	samtools view -Sbh -F 0x4 --threads 16 pg_ref.sam |samtools sort -@16 > mapped_ref.bam
+
+Extraemos el consenso de las reads alineadas:
 	
-	samtools mpileup -E -uf pgRef.fna mapped_ref.bam |bcftools call -c - |vcfutils.pl vcf2fq > pg_consensus.fastq
+	samtools mpileup -E -uf pgRef.fna mapped_ref.bam |bcftools call -c - |vcfutils.pl vcf2fq > pg_consensus.fasta
 	
-Finalmente transformamos el formato fastq a fasta con este simple script de perl ([pincha aquí para descargar](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/fastq2fasta.pl)).
+Finalmente transformamos el formato fastq a fasta.
 
-	perl fastq2fasta.pl -a pg_consensus.fastq > pg_consensus.fasta
+	seqtk seq -A pg_consensus.fastq > pg_consensus.fa
+
 	#salimos de la carpeta
 	cd ..
 	
-Y voilà! tenemos nuestro genoma ensamblado con referencia. Como las estadísticas básicas son heredadas por el genoma de referencia, no hace falta hacerlas de nuevo, esta vez veremos un termino más avanzado, y que sirve para ambos tipos de ensambles, hablamos del "Coverage".
+Y voilà! tenemos nuestro genoma ensamblado con referencia (pg_consensus.fasta). Como las estadísticas básicas son heredadas por el genoma de referencia, no hace falta hacerlas de nuevo, esta vez veremos un termino más avanzado, y que sirve para ambos tipos de ensambles, hablamos del "Coverage". Si no pudiste llegar hasta este paso, te dejamos el resultado del consenso [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pg_consensus.fasta)
 
 
 ## Paso 4: Obtención de coverage
@@ -280,17 +299,17 @@ Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El 
 Esto nos dará (igual que en el ensamble con referencia), un archivo SAM (Sequence Aligment Map), con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). 
 
 ### Paso 4.2: **Con referencia**
-En este caso, el alineamiento de reads ya está hecho, es el archivo SAM que obtuvimos al alinear las secuencias en contra del genoma de referencia.  Por lo tanto nos hemos ahorrado este paso, Felicidades!
+En este caso, el alineamiento de reads ya está hecho, es el archivo SAM que obtuvimos al alinear las secuencias en contra del genoma de referencia (pg_ref.sam).  Por lo tanto nos hemos ahorrado este paso, Felicidades!
 
 ### Paso 4.3: Convergencia en los pasos
 Si bien se trata de forma independiente los casos para ensamble *denovo* y con referencia, hay un punto en común que puede utilizarse independiente del método y es a partir del archivo SAM, así que escojamos uno y sigamos adelante!.
 
-Por lo pronto, necesitamos transformar el formato SAM a BAM (Binary Aligment Map), en este caso seleccionaremos el archivo SAM del ensamble *denovo*:
+Por lo pronto, necesitamos transformar el formato SAM a BAM (Binary Aligment Map), seleccionaremos el archivo SAM del ensamble *denovo* para continuar:
 
 	samtools view -b -S pg.sam |samtools sort -@16 > pg.bam
 	#ahora obtenemos el coverage por bp usango el archivo BAM anterior y el ensamble denovo, si tu escogiste el otro método, entonces debes utilizar el correspondiente BAM, y el genoma de referencia (pgRef.fna).
 	genomeCoverageBed -ibam pg.bam -g ../paso3/pg_assembly/filter500.fasta -d > all.txt
-	
+
 Donde:
 
 * -ibam es el archivo BAM de input
@@ -342,3 +361,57 @@ Ahora estamos listos para graficar!, para eso solo copia este feo pero útil có
 Esto dará como resultado el siguiente gráfico que puedes guardar en la pestaña Export en el cuadro de la derecha de Rstudio:
 ![](../images/coverage_denovo.png)
 Como vemos, el coverage a lo largo del genoma es homogéneo salvo algunas zonas pequeñas, y de acuerdo a la definición de este, tenemos que nuestro genoma esta cubierto aproximadamente 190 veces, un muy buen resultado.
+
+## Paso 5: Anotación de ensambles
+El proceso de anotación de un genoma (o alguna secuencia), se refiere a localizar algún patron (o muchos), dentro de una secuencia y asignarle un significado cada una de esas secciones para ser interpretada por nosotros.
+
+Ahora que sabemos que nuestro ensamble está bien (*denovo* o con referencia), el siguiente paso es obtener anotaciones de ellos usando "prokka". Prokka es un software de anotación de organismos procariotas muy rápido, aproximadamente le toma 10 minutos anotar un genoma de 4Mbp. Listo, ¿Como anotamos?
+
+	#muy simple, primero creamos una carpeta llamada paso5
+	mkdir paso5
+	#entramos en la carpeta
+	cd paso5
+	#ejecutamos esta linea de código para invocar a prokka, (usaremos el ensamble denovo, tu puedes usar el que mas te guste :D).
+	prokka ../paso3/pg_assembly/filter500.fasta --outdir pg_annot --prefix pg --addgenes --centre e --locustag l --evalue 1e-5 --cpus 16
+
+Donde:
+
+* --outdir es el nombre de la carpeta donde se guardaran nuestros resultados.
+* --prefix es el prefijo que tendrán nuestros archivos.
+* --addgenes es un parametro para decirle a prokka que encuentre genes en cada CDS (coding DNA sequence).
+* --centre es un id para nuestra anotación
+* --locustag es un prefijo para cada locus que prokka encuentre.
+* --evalue es un valor de filtro para que los resultados encontrados no sean al azar (mientras mas cercano a 0 mas estricto).
+* --cpus es el numero de procesadores que prokka usará.
+
+Esto resultará en 11 archivos. No te preocupes, no los usaremos todos, solo te recordaremos que contienen.
+
+| Extensión |	Descripción	| 
+|:---------:|:------------:|
+|.gff	|	Es el archivo maestro de la anotación, contiene tanto las secuencias como sus anotaciones.|
+|.gbk (.gb)	|	Es el archivo Genbank estándar derivado del .gff, si el input de prokka fue un multi-FASTA, entonces el output sera un multi-Genbank.|
+|.fna	|Es un archivo FASTA con los contigs (o secuencias), de entrada|
+|.faa	|Es un FASTA de secuencias aminoacidicas traducidas de los CDS encontrados.|
+|.ffn	|Es un FASTA con todos los transcritos (CDS, rRNA, tRNA, tmRNA, misc_RNA) predichos.|
+|.sqn	|Es un archivo con formato ASN1 "Sequin" para subirlos a Genbank.|
+|.fsa	|Es un FASTA de nucleótidos de los contigs usados como input, usado por "tbl2asn" para crear el archivo .sqn|
+|.tbl	|Feature Table file, es usado por "tbl2asn" para crear el archivo .sqn|
+|.err	|Es un archivo con anotaciones no aceptadas - es un reporte con discrepancias de acuerdo a NCBI.|
+|.log	|Un archivo .log contiene todos los mensajes de prokka mientras se ejecuta.|
+|.txt	|Es un archivo con estadistícas acerca de las anotaciones encontradas.|
+|.tsv	|Tab-separated file of all features: locus_tag,ftype,gene,EC_number,product|
+
+Puede que no estén todos los archivos, dependiendo de los parámetros con los que fue invocado prokka, aún así los archivos mas usados son: .fna, .ffn, .faa
+
+veamos que estadísticas nos dice el archivo pg.txt
+
+	organism: Genus species strain 
+	contigs: 67
+	bases: 2268869
+	CDS: 1931
+	tRNA: 47
+	tmRNA: 1
+	gene: 1979
+	repeat_region: 3
+	
+prokka encontró en nuestros 67 contigs (archivo .fna), encontró 1931 CDS que podemos encontrar el archivo .faa, 1979 genes que los podemos encontrar en el archivo .ffn. si tienes problemas para obtener la anotación, descárgala pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/pg_annot.zip)
