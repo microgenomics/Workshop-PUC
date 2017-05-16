@@ -236,10 +236,25 @@ Este genoma tiene 1 solo cromosoma, es decir, no está fragmentado como en el ca
 Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El siguiente paso es alinear los reads, de cualquier forma, si no lograste indexar el genoma por A B C motivos, pincha [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef_index.zip) para descargarlos y ponerlos en la carpeta paso3.
 
 	#siguiente paso: alinear
-	bowtie2 -x pgRef_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg.sam --end-to-end --very-sensitive --threads 16
+	bowtie2 -x pgRef_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg_ref.sam --end-to-end --very-sensitive --threads 16
 
-Esto nos dará un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)).
+Esto nos dará un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Al cual someteremos a una curiosa linea de código que nos dará solo los reads que han alineado con el genoma de referencia y de paso transformamos el formato a BAM para ahorrar espacio.
 
+	samtools view -Sbh -F 0x4 --threads 16 pg_ref.sam |samtools sort -n -@16 > mapped_ref.bam
+
+Indexamos el nuevo archivo:
+
+	samtools index mapped_ref.bam
+
+Extraemos el consenso:
+	
+	samtools mpileup -E -uf pgRef.fna mapped_ref.bam |bcftools call -c - |vcfutils.pl vcf2fq > pg_consensus.fastq
+	
+Finalmente transformamos el formato fastq a fasta con este simple script de perl ([pincha aquí para descargar](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/fastq2fasta.pl)).
+
+	perl fastq2fasta.pl -a pg_consensus.fastq > pg_consensus.fasta
+	
+Y voilà! tenemos nuestro genoma ensamblado con referencia. Como las estadísticas básicas son heredadas por el genoma de referencia, no hace falta hacerlas de nuevo, esta vez veremos un termino más avanzado, y que sirve para ambos tipos de ensambles, hablamos del "Coverage".
 
 
 ## Paso 4: Obtención de coverage
@@ -259,13 +274,28 @@ Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El 
 
 	bowtie2 -x pg_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg.sam --end-to-end --very-sensitive --threads 16
 
-Esto nos dará (igual que en el ensamble con referencia), un archivo SAM (Sequence Aligment Map), con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Por lo pronto, necesitamos transformar el formato SAM a BAM (Binary Aligment Map):
+Esto nos dará (igual que en el ensamble con referencia), un archivo SAM (Sequence Aligment Map), con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). 
+
+### Paso 4.2: **Con referencia**
+En este caso, el alineamiento de reads ya está hecho, es el archivo SAM que obtuvimos al alinear las secuencias en contra del genoma de referencia.  Por lo tanto nos hemos ahorrado este paso, Felicidades!
+
+### Paso 4.3: Convergencia en los pasos
+Si bien se trata de forma independiente los casos para ensamble *denovo* y con referencia, hay un punto en común que puede utilizarse independiente del método y es a partir del archivo SAM, así que escojamos uno y sigamos adelante!.
+
+Por lo pronto, necesitamos transformar el formato SAM a BAM (Binary Aligment Map), en este caso seleccionaremos el archivo SAM del ensamble *denovo*:
 
 	samtools view -b -S pg.sam |samtools sort -@16 > pg.bam
-	#now get the coverage per bp
+	#ahora obtenemos el coverage por bp usango el archivo BAM anterior y el ensamble denovo, si tu escogiste el otro método, entonces debes utilizar el correspondiente BAM, y el genoma de referencia (pgRef.fna).
 	genomeCoverageBed -ibam pg.bam -g ../paso3/pg_assembly/filter500.fasta -d > all.txt
 	
-[all.txt](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso4/all.txt.zip) tiene el coverage por nucleótido a lo largo de nuestro genoma, así que, estamos listos para graficar!, para eso solo copia este feo pero útil código en Rstudio y ejecútalo (pero ajusta la primera línea para que la ruta al archivo all.txt sea la correcta).
+Donde:
+
+* -ibam es el archivo BAM de input
+* -g el genoma de referencia (el ensamble denovo o el genoma de referencia, según corresponda).
+* -d reporta la profundidad para cada nucleótido.
+* >all.txt tiene el coverage por nucleótido a lo largo de nuestro genoma. Si tuviste problemas para obtener el archivo, [haz click aquí para bajarlo.](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso4/all.txt.zip)
+
+Ahora estamos listos para graficar!, para eso solo copia este feo pero útil código en Rstudio y ejecútalo (pero ajusta la primera línea para que la ruta al archivo all.txt sea la correcta).
 
 	alltxtPath<-"paso4/all.txt"
 	
