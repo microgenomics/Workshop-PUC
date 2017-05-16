@@ -83,7 +83,7 @@ La siguiente tabla muestra algunos datos útiles sobre los archivos FASTQ que ac
 
 ---
 
-### Etapa 1: Pre-procesamiento de *reads*
+### Pre-procesamiento de *reads*
 
 El pre-procesamiento de los *reads* de RAD-seq, obtenidos desde el proceso de secuenciación (*raw data*), consta de dos procesos principales. Primero, identificar los *reads* pertenecientes a cada individuo (*demultiplex*) y recuperarlos en archivos FASTQ independientes, para ello se utilizan los *barcodes* o *index*, que son secuencias pequeñas (5 nucleótidos) presentes en los partidores utilizados en la construcción de las librerías de secuenciación. Y segundo, realizar el control de calidad (QC: *quality control*), donde se descartan los *reads* de baja calidad.
 
@@ -147,7 +147,7 @@ Cuando estés listo presiona `enter`...
 
 Si obtienes un mensaje de `error` asegúrate de leerlo con atención, te dirá qué está mal y sabrás cómo solucionarlo, también puedes consultar el `error` en `google`... y no te preocupes ! puedes correr un experimento *in silico* cuantas veces sea necesario sin gastar más que tu tiempo y la disponibilidad de tu computadora !
 
-##### Etapa 1: resultados (*output*)
+##### Resultados (*output*)
 
 De esta primera etapa esperamos obtener tantos archivos FASTQ como individuos o muestras existentes. Es decir, obtendrás un archivo FASTQ por cada muestra llamados `nombre_muestra.fastq` conteniendo los *reads* específicos y que hayan pasado el control de calidad (QC). Por ejemplo:
 
@@ -161,3 +161,90 @@ De esta primera etapa esperamos obtener tantos archivos FASTQ como individuos o 
 	ms_2067-51.fastq   rb_2240-128.fastq  wc_1218-07.fastq
 	ms_2067-66.fastq   rb_2240-158.fastq  wc_1221-02.fastq
 
++ **Nota**: Los datos ejemplo que descargáste anteriormente ([aquí](https://dl.dropboxusercontent.com/u/73361402/PRJNA195932_18subset.zip)) corresponden a los archivos FASTQ que observamos en el recuadro de arriba, ósea al *output* del pre-procesamiento de *reads*. Por lo que si estás utilizando los datos ejemplo, deberás comenzar desde aquí, ya que, Catchen y cols., (2013) primero realizaron el *demultiplexed* de los *reads* para luego subir los datos por cada muestra a la base de datos SRA de NCBI.
+
+Ya teniendo los *reads* pre-procesados, podemos continuar con el ensamble de los *contigs* (que corresponderían a los *loci*) para luego hacer los análisis de diversidad genética.
+
+### ¿ Referencia o *De Novo* ?
+
+Si cuentas con un genoma de referencia continúa con la siguiente sección **"Alineamiento Contra Genoma de Referencia"**, en el caso contrario continúa con la sección sub-siguiente **"_De Novo_"**.
+
+#### Alineamiento Contra Genoma de Referencia
+
+Primero descarga el genoma de referencia de tu organismo en formato FASTA. Dirígete a la página principal de [NCBI](https://www.ncbi.nlm.nih.gov), selecciona "Genome" en las opciónes del buscador, escribe el género y especie de tu organismo y presiona `Search`. Deberías ver algo como la siguiente imágen:
+
+![NCBI Screenshot](https://github.com/microgenomics/Workshop-PUC/blob/master/images/NCBI_Gaculeatus_Genome.png?raw=true "")
+
+Haz clic en "_Download sequences in fasta format for **genome**_" para descargar el genoma. Si estás utilizando los datos ejemplo, puedes descargar el genoma de *Gasterosteus aculeatus* [aquí](https://dl.dropboxusercontent.com/u/73361402/GCA_000180675.1_ASM18067v1_genomic.fna.gz).
+
+El siguiente paso es mapear los *reads* en contra del genoma de referencia, para ello vamos a utilizar la herramienta bioinformática **[Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)**. Recuerda que debes tener bowtie2 instalado y operativo en tu computador... más detalles en el [tutorial del día 1]() o en el [manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) de la herramienta.
+
+##### Vamos a realizar el alineamiento !!
+
+Antes de correr el mapeo, debemos indexar el genoma para que Bowtie2 pueda usarlo como referencia, usando el programa `bowtie2-build` de Bowtie2:
+
+	# Recordemos que tenemos, hasta ahora, en nuestra actual carpeta de trabajo
+	$ ls
+	raw_data/
+	etapa_1/
+	GCA_000180675.1_ASM18067v1_genomic.fna
+	# Crea una carpeta para guardar e indexar el genoma de referencia
+	$ mkdir reference/
+	$ mv GCA_000180675.1_ASM18067v1_genomic.fna reference/
+	# Entra a reference/ y usa bowtie2-build para indexar el genoma
+	$ bowtie2-build -h  # recuerda darle un vistazo a los parámetros disponibles
+	$ bowtie2-build GCA_000180675.1_ASM18067v1_genomic.fna Gaculeatus_reference --threads 4
+	
+Después de escribir la línea de comando y presionar `enter` el programa `bowtie2-build` comenzará a correr y verás algo como la siguiente imágen:
+
+![]( "")
+
+	# Cuando bowtie2-build termine, como output deberías obtener varios archivos con extensión .bt2
+	$ ls
+	GCA_000180675.1_ASM18067v1_genomic.fna
+	Gaculeatus_reference.1.bt2
+	Gaculeatus_reference.2.bt2
+	Gaculeatus_reference.3.bt2
+	Gaculeatus_reference.4.bt2
+	Gaculeatus_reference.rev.1.bt2
+	Gaculeatus_reference.rev.2.bt2
+	
+Ahora que ya tenemos indexado el genoma de referencia, podemos correr el alineamiento de los *reads* contra la referencia usando `bowtie2`.
+
+Como las muestras provienen de individuos diferentes, debemos realizar alineamientos independientes, para los datos ejemplo serían 18 alineamientos en total... por supuesto, no tienes que permanecer frente a la pantalla esperando a que un alineamiento termine para lazar el siguiente!... puedes preparar un pequeño ciclo, así:
+
+1.- Crea una lista con los nombres de tus muestras (*sample_names*)... los mismos que se encuentran en la columna 2 del archivo `barcode-sample_list`, así:
+
+	# Sal de la carpeta reference/ y crea una carpeta para guardar los resultados del alineamiento
+	$ cd ../
+	$ mkdir mapp/
+	$ cd mapp/
+	# Crea la lista con los nombres de las muestras usando el archivo barcode-sample_list
+	$ awk '{print $2}' ../raw_data/barcode-sample_list > samples_list
+	# Dale un vistazo al nuevo archivo de texto
+	$ cat samples_list
+	cr_1533-05
+	cr_1533-17
+	cs_1335-17
+	cs_1335-54
+	ms_2067-51
+	ms_2067-66
+	pcr_1211-11
+	pcr_1312-13
+	pl_1537-11
+	pl_1537-27
+	rb_2240-128
+	rb_2240-158
+	sj_1879-31
+	sj_1879-34
+	stl_1274-63
+	stl_1274-72
+	wc_1218-07
+	wc_1221-02
+	# Excelente! como son 18 muestras, el archivo samples_list debiese tener 18 líneas
+	$ wc -l samples_list 
+      18 samples_list
+ 
+
+
+#### *De Novo*
