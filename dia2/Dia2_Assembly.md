@@ -104,7 +104,7 @@ Para esto usaremos un software llamado SPAdes, un software desarrollado en pytho
 	cd paso3
 	spades.py -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -t 16 -m 32 -o pg_assembly --careful --cov-cutoff auto
 	
-Done: 
+Donde: 
 
 * -1 es la secuencia forward de nuestros reads.
 * -2 es la secuencia reverse de nuestros reads
@@ -241,7 +241,7 @@ Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El 
 	#siguiente paso: alinear
 	bowtie2 -x pgRef_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg_ref.sam --end-to-end --very-sensitive --threads 16
 
-Aquí uno tendería a pensar que todas nuestras reads se alinearon, esto no es así:
+Aquí uno tendería a pensar que todas nuestras reads se alinearon y si revisamos el output de bowtie2 nos daremos cuenta que esto no es así:
 
 	1060210 reads; of these:
 	  1060210 (100.00%) were paired; of these:
@@ -259,11 +259,20 @@ Aquí uno tendería a pensar que todas nuestras reads se alinearon, esto no es a
 	        7732 (2.31%) aligned >1 times
 	85.38% overall alignment rate
 
-Tenemos un 85.38% de reads alineadas, el resto probablemente pertenecen a contaminación (que es algo mas común de lo que se piensa), o quizás es alguna sección que no existe en el genoma de referencia y que si existe en el ensamble *denovo*.
+Tenemos un 85.38% de reads alineadas (gran porcentaje por cierto), el resto probablemente pertenecen a contaminación (que es algo mas común de lo que se piensa), o quizás es alguna sección que no existe en el genoma de referencia y que si existe en el ensamble *denovo*, etc.
 
-Bowtie2 nos dará como output un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Al cual someteremos a una curiosa linea de código que nos dará solo los reads que han alineado con el genoma de referencia y de paso transformamos el formato a BAM para ahorrar espacio.
+Bowtie2 nos dará como resultado un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Al cual someteremos a una curiosa linea de código que nos dará solo los reads que han alineado con el genoma de referencia y de paso transformamos el formato a BAM para ahorrar espacio.
 
 	samtools view -Sbh -F 0x4 --threads 16 pg_ref.sam |samtools sort -@16 > mapped_ref.bam
+
+Donde:
+
+* view es el modulo de samtools encargado de las operaciones con reads alineados.
+* -Sbh son en realidad 3 parámetros (seria lo mismo escribir -S, -b, -h), la combinación de estos hace que el formato se cambie a .bam.
+* -F 0x4 es un parámetro para decirle a samtools que solo tome en cuenta las reads alineadas.
+* --threads es el número de hilos que utilizará samtools para trabajar (normalmente el numero de hilos a usar es el doble de los procesadores).
+* sort es un modulo de samtools encargado de ordenar las reads de acuerdo a su posición en el alineamiento, o de acuerdo a su ID (-n para ordenar por nombre).
+* -@ misma función que --threads.
 
 Extraemos el consenso de las reads alineadas:
 	
