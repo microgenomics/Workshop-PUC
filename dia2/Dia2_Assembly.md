@@ -154,7 +154,7 @@ copia y pega el siguiente código en tu hoja en blanco y sigamos pero ahora desd
 library(ape)
 
 #cambiamos la ruta de nuestro ensamble de acuerdo nuestro caso.
-MyAssemblyPath<-"~/Desktop/Workshop-PUC/dia2/paso3/pg_assembly/filter500.fasta"
+MyAssemblyPath<-"~/Desktop/Work-shop/paso3/pg_assembly/filter500.fasta"
 
 myassembly<-read.dna(MyAssemblyPath,format = "fasta",as.character = T)
 
@@ -162,8 +162,8 @@ myassembly<-read.dna(MyAssemblyPath,format = "fasta",as.character = T)
 #calcular el total de contigs de nuestro ensamble#
 ##################################################
 total_contigs<-length(myassembly)
-total_contigs #67
-#En total son 67 contigs, un valor muy bueno si consideramos que nuestra muestra solo se ha secuenciado una sola vez nuestra bacteria y en la práctica, este valor es más alto.
+total_contigs #143
+#En total son 143 contigs, un valor bueno si consideramos que nuestra muestra solo se ha secuenciado una sola vez (y es un set reducido).
 
 ######################################################
 #calcular el largo total (en bp), de nuestro ensamble#
@@ -175,16 +175,16 @@ plot(largo_contigs)
 #y podemos guardar este gráfico en el botón Export del lado derecho de Rstudio, justo arriba del gráfico.
 #ahora sumaremos todos los largos
 largo_total<-sum(largo_contigs)
-largo_total #2268869
-#La cantidad total de bases también es buena en este caso, 2,268,869 (Total length) que se acerca mucho a los 2,354,886 que tiene el genoma de referencia de esta bacteria (Porphyromonas gingivalis ATCC 33277).
+largo_total #2306476
+#La cantidad total de bases también es buena en este caso, 2,306,476 (Total length) que se acerca mucho a los 2,354,886 que tiene el genoma de referencia de esta bacteria (Porphyromonas gingivalis ATCC 33277).
 
 
 ##################################
 #calcular %GC de nuestro ensamble#
 ##################################
 gccontent<-GC.content(as.DNAbin(myassembly))
-gccontent #0.4845348
-#El %GC de nuestro genoma también es un indicador que podemos usar para comprobar la similitud de nuestro genoma en este aspecto. 48.45% vs 48.4% (referencia) es muy bueno.
+gccontent #0.4819975
+#El %GC de nuestro genoma también es un indicador que podemos usar para comprobar la similitud de nuestro genoma en este aspecto. 48.19% vs 48.4% (referencia) es muy bueno.
 
 ####################
 #calcular valor N50#
@@ -193,9 +193,9 @@ gccontent #0.4845348
 #de acuerdo a lo anterior, el primer paso sería ordenar los contigs de mayor a menor, pero SPAdes ya lo hizo por nosotros :D.
 #el segundo paso es entonces obtener el 50% de nuestro genoma.
 mitad<-largo_total/2
-mitad #1134434
+mitad #1153238
 
-#el ultimo paso es ir sumando los contigs hasta obtener por lo menos el valor de 1134434 (mitad)
+#el ultimo paso es ir sumando los contigs hasta obtener por lo menos el valor de 1153238 (mitad)
 acumulacion<-0
 for(N50 in largo_contigs){
   acumulacion<- acumulacion + N50
@@ -203,8 +203,8 @@ for(N50 in largo_contigs){
     break
   }
 }
-N50 #75957
-# En este caso, nuestro N50 sería: 75957. esta medida debemos complementarla con un valor L50, que nos dice cuantos contigs forman el N50.
+N50 #77653
+# En este caso, nuestro N50 sería: 77653. esta medida debemos complementarla con un valor L50, que nos dice cuantos contigs forman el N50.
 
 ####################
 #calcular valor L50#
@@ -228,7 +228,7 @@ Estas son solo algunas estadísticas básicas, también existen otras como el N9
 ### Paso 3.3: Ensamble con referencia
 Ensamblar reads usando una referencia permite obtener un genoma tan bueno como lo sea la referencia, es decir, nuestras reads solo se acotaran al alineamiento de nuestra referencia y heredará algunas estadísticas básicas como el N50 y L50. Manos a la obra!
 
-Lo primero es descargar un genoma de referencia, en nuestro caso, descargaremos el genoma de [Porphyromonas gingivalis ATCC 33277](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef.fna), si buscas otro genoma puedes consultar [la página web de NCBI](https://www.ncbi.nlm.nih.gov/genome/).
+Lo primero es descargar un genoma de referencia, en nuestro caso, descargaremos el genoma de [Porphyromonas gingivalis ATCC 33277](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef.fna.zip), si buscas otro genoma puedes consultar [la página web de NCBI](https://www.ncbi.nlm.nih.gov/genome/).
 
 Este genoma de referencia posee las siguientes características:
 
