@@ -127,7 +127,7 @@ Ahora, suponiendo que te encuentras en una carpeta en la cual tenemos las carpet
 	ATCAAA		wc_1218-07
 	ACATAC		wc_1221-02
 
-... descarga el archivo `barcode-sample_list` [aquí](https://github.com/microgenomics/Workshop-PUC/blob/master/dia3/barcode-sample_list).
+... descarga el archivo `barcode-sample_list` [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia3/barcode-sample_list.zip).
 
 Ahora evalúa y escribe la línea de commando correcta para tus datos, por ejemplo:
 
