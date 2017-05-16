@@ -22,6 +22,8 @@ Requisitos:
 	* ape
 * Reads: Si no tienes lecturas de secuenciación, puedes descargar las que se usaron en este workshop [aquí](#), son de una Porphyromonas gingivalis.
 
+**Recomendación para el curso: siempre ten en cuenta donde estas ubicado en la terminal, así evitaras errores como "no such file or directory"**
+
 ### Paso 1: Revisar calidad de los reads
 
 El primer paso (siempre), antes de trabajar con reads es obtener algunas estadísticas que nos dirán que tan bien resultó nuestra secuenciación, para esto usaremos FastQC, un programa escrito en java y que rápidamente nos puede otorgar estadísticas acerca del estado de nuestros reads.
@@ -29,13 +31,16 @@ El primer paso (siempre), antes de trabajar con reads es obtener algunas estadí
 	#crearemos una carpeta llamada paso1
 	mkdir paso1
 	#mueve tus secuencias a la carpeta paso1
-	#puedes hacerlo arrastrando los archivos a la carpeta como una persona normal, o puedes usar la terminal de tu computadora como los creadores del ramsomware que infectó a Movistar hace unos días.
+	#puedes hacerlo arrastrando los archivos a la carpeta como una persona normal.
+	#O puedes usar la terminal de tu computadora como los creadores del ramsomware que infectó a Movistar hace unos días.
 	mv *.fastq paso1/.
 	#Abrir fastQC
 	File -> Open -> seleccionar pg_R1.fastq y pg_R2.fastq.
 
 Aunque en este paso solo veremos algunas secciones del reporte, al final dejaremos el archivo disponible para que puedas descargarlo y analizarlo con mas tiempo. Ahora la principal ventana que nos interesa es la calidad que tiene nuestra secuenciación, y en general, una calidad (Q) sobre 20 se considera buena, ¿porqué?: El valor Q se define como una propiedad que está logaritmicamente relacionada con la probabilidad de que una base nucleotídica sea mal secuenciada, Q = -10log(P). Así, un valor Q   de 20 significaría un error de 1 base cada 100, dando una precisión del 99%. y viendo nuestro reporte, tenemos una buena secuenciación.
+
 ![](../images/fastqc1.png)
+
 Otro aspecto que vale la pena revisar es el **%GC** (contenido Guanina-Citosina), un valor usado para clasificar organismos y en este caso para corroborar que lo que se secuenció sea efectivamente lo que queremos, para eso ambas curvas (teórica y real), deben ser similares y de un solo peak.
 ![](../images/fastqc2.png)
 FastQC en este caso nos dice que hay algo malo con el contenido de Kmer (un Kmer se puede definir como todos los sub-read de nuestro read de largo definido y usado en diferentes aplicaciones. [Para ver mas información acerca de los Kmer pinche aquí](https://en.wikipedia.org/wiki/K-mer)).
@@ -99,19 +104,19 @@ Ensamblar un genoma *denovo* se refiere a la unión de todas las reads en un sú
 
 **Recordatorio: nunca se obtendrá un solo scaffolds que represente todo el genoma circular de la bacteria (o algún otro organismo) a menos que sea secuenciada con mas de una tecnología o se usen diferentes librerías de secuenciación.**
 
-Para esto usaremos un software llamado SPAdes, un software desarrollado en python que mediante gráficos de brujin (haciendo uso de kmers), ensambla nuestras reads. Debemos tener en cuenta que el proceso de ensamble requiere mucha memoria RAM, aproximadamente unos 8GB para pequeñas secuenciaciones, y en este caso se necesitan 16GB de RAM, **es por esto que al final de este paso te damos el ensamble hecho!** :
+Para esto usaremos un software llamado SPAdes, un software desarrollado en python que mediante gráficos de brujin (haciendo uso de kmers), ensambla nuestras reads. Debemos tener en cuenta que el proceso de ensamble requiere mucha memoria RAM, aproximadamente unos 8GB para pequeñas secuenciaciones, **es por esto que al final de este paso te damos el ensamble hecho!** :
 
 	#crear carpeta paso3
 	mkdir paso3
 	#entrar en la carpeta
 	cd paso3
-	spades.py -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -t 16 -m 32 -o pg_assembly --careful --cov-cutoff auto
+	spades.py -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -t 4 -m 8 -o pg_assembly --careful --cov-cutoff auto
 	
 Donde: 
 
 * -1 es la secuencia forward de nuestros reads.
 * -2 es la secuencia reverse de nuestros reads
-* -t es el número de hilos que la CPU de nuestro computador usará
+* -t es el número de hilos que la CPU de nuestro computador usará (si usted tiene un intel core i3 escriba: -t 4, si tiene un i5 o i7 escriba: -t 8)
 * -m es la memoria RAM que especificamos a SPAdes
 * -o es el output de nuestro ensamble (carpeta donde estarán los resultados
 * --careful parámetro para reducir el número de reads mal ensambladas
@@ -149,7 +154,7 @@ copia y pega el siguiente código en tu hoja en blanco y sigamos pero ahora desd
 library(ape)
 
 #cambiamos la ruta de nuestro ensamble de acuerdo nuestro caso.
-MyAssemblyPath<-"~/Desktop/Workshop-PUC/dia2/paso3/pg_assembly/filter500.fasta"
+MyAssemblyPath<-"~/Desktop/Work-shop/paso3/pg_assembly/filter500.fasta"
 
 myassembly<-read.dna(MyAssemblyPath,format = "fasta",as.character = T)
 
@@ -157,8 +162,8 @@ myassembly<-read.dna(MyAssemblyPath,format = "fasta",as.character = T)
 #calcular el total de contigs de nuestro ensamble#
 ##################################################
 total_contigs<-length(myassembly)
-total_contigs #67
-#En total son 67 contigs, un valor muy bueno si consideramos que nuestra muestra solo se ha secuenciado una sola vez nuestra bacteria y en la práctica, este valor es más alto.
+total_contigs #143
+#En total son 143 contigs, un valor bueno si consideramos que nuestra muestra solo se ha secuenciado una sola vez (y es un set reducido).
 
 ######################################################
 #calcular el largo total (en bp), de nuestro ensamble#
@@ -170,16 +175,16 @@ plot(largo_contigs)
 #y podemos guardar este gráfico en el botón Export del lado derecho de Rstudio, justo arriba del gráfico.
 #ahora sumaremos todos los largos
 largo_total<-sum(largo_contigs)
-largo_total #2268869
-#La cantidad total de bases también es buena en este caso, 2,268,869 (Total length) que se acerca mucho a los 2,354,886 que tiene el genoma de referencia de esta bacteria (Porphyromonas gingivalis ATCC 33277).
+largo_total #2306476
+#La cantidad total de bases también es buena en este caso, 2,306,476 (Total length) que se acerca mucho a los 2,354,886 que tiene el genoma de referencia de esta bacteria (Porphyromonas gingivalis ATCC 33277).
 
 
 ##################################
 #calcular %GC de nuestro ensamble#
 ##################################
 gccontent<-GC.content(as.DNAbin(myassembly))
-gccontent #0.4845348
-#El %GC de nuestro genoma también es un indicador que podemos usar para comprobar la similitud de nuestro genoma en este aspecto. 48.45% vs 48.4% (referencia) es muy bueno.
+gccontent #0.4819975
+#El %GC de nuestro genoma también es un indicador que podemos usar para comprobar la similitud de nuestro genoma en este aspecto. 48.19% vs 48.4% (referencia) es muy bueno.
 
 ####################
 #calcular valor N50#
@@ -188,9 +193,9 @@ gccontent #0.4845348
 #de acuerdo a lo anterior, el primer paso sería ordenar los contigs de mayor a menor, pero SPAdes ya lo hizo por nosotros :D.
 #el segundo paso es entonces obtener el 50% de nuestro genoma.
 mitad<-largo_total/2
-mitad #1134434
+mitad #1153238
 
-#el ultimo paso es ir sumando los contigs hasta obtener por lo menos el valor de 1134434 (mitad)
+#el ultimo paso es ir sumando los contigs hasta obtener por lo menos el valor de 1153238 (mitad)
 acumulacion<-0
 for(N50 in largo_contigs){
   acumulacion<- acumulacion + N50
@@ -198,8 +203,8 @@ for(N50 in largo_contigs){
     break
   }
 }
-N50 #75957
-# En este caso, nuestro N50 sería: 75957. esta medida debemos complementarla con un valor L50, que nos dice cuantos contigs forman el N50.
+N50 #77653
+# En este caso, nuestro N50 sería: 77653. esta medida debemos complementarla con un valor L50, que nos dice cuantos contigs forman el N50.
 
 ####################
 #calcular valor L50#
@@ -223,7 +228,7 @@ Estas son solo algunas estadísticas básicas, también existen otras como el N9
 ### Paso 3.3: Ensamble con referencia
 Ensamblar reads usando una referencia permite obtener un genoma tan bueno como lo sea la referencia, es decir, nuestras reads solo se acotaran al alineamiento de nuestra referencia y heredará algunas estadísticas básicas como el N50 y L50. Manos a la obra!
 
-Lo primero es descargar un genoma de referencia, en nuestro caso, descargaremos el genoma de [Porphyromonas gingivalis ATCC 33277](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef.fna), si buscas otro genoma puedes consultar [la página web de NCBI](https://www.ncbi.nlm.nih.gov/genome/).
+Lo primero es descargar un genoma de referencia, en nuestro caso, descargaremos el genoma de [Porphyromonas gingivalis ATCC 33277](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef.fna.zip), si buscas otro genoma puedes consultar [la página web de NCBI](https://www.ncbi.nlm.nih.gov/genome/).
 
 Este genoma de referencia posee las siguientes características:
 
@@ -428,6 +433,8 @@ veamos que estadísticas nos dice el archivo pg.txt
 	
 prokka encontró en nuestros 67 contigs (archivo .fna), encontró 1931 CDS que podemos encontrar el archivo .faa, 1979 genes que los podemos encontrar en el archivo .ffn. si tienes problemas para obtener la anotación, descárgala pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/pg_annot.zip)
 
-Finalmente podemos visualizar el .gbk con [Artemis](http://www.sanger.ac.uk/science/tools/artemis), un software de Sanger Institute, con el que gráficamente podemos ver el .gff **[click derecho en el gff -> abrir con Artemis]** y buscar algún gen de nuestro interés, o alguna región
+Finalmente podemos visualizar el .gbk con [Artemis](http://www.sanger.ac.uk/science/tools/artemis), un software de Sanger Institute, con el que gráficamente podemos ver el .gff **[click derecho en el gff -> abrir con Artemis]** y buscar algún gen específico, o alguna zona de nuestro interés en el genoma, etc.
 
 ![](../images/artemis.png)
+
+Hurra!, hemos llegado al final de este tutorial, esperamos que te haya servido tanto como a nosotros!, recuerda que puedes consultarnos cualquier duda que tengas. No te pierdas el proximo tutorial acerca de **Fundamentos de técnicas de representación reducida del genoma**.

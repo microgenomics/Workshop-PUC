@@ -1,4 +1,6 @@
+![banner](images/logocbibhorizontal.png)
 # Workshop-PUC
+---------
 
 * [Día 1](): 
 	* Teórico: Tecnologías de secuenciación masiva. 
