@@ -31,13 +31,16 @@ El primer paso (siempre), antes de trabajar con reads es obtener algunas estadí
 	#crearemos una carpeta llamada paso1
 	mkdir paso1
 	#mueve tus secuencias a la carpeta paso1
-	#puedes hacerlo arrastrando los archivos a la carpeta como una persona normal, o puedes usar la terminal de tu computadora como los creadores del ramsomware que infectó a Movistar hace unos días.
+	#puedes hacerlo arrastrando los archivos a la carpeta como una persona normal.
+	#O puedes usar la terminal de tu computadora como los creadores del ramsomware que infectó a Movistar hace unos días.
 	mv *.fastq paso1/.
 	#Abrir fastQC
 	File -> Open -> seleccionar pg_R1.fastq y pg_R2.fastq.
 
 Aunque en este paso solo veremos algunas secciones del reporte, al final dejaremos el archivo disponible para que puedas descargarlo y analizarlo con mas tiempo. Ahora la principal ventana que nos interesa es la calidad que tiene nuestra secuenciación, y en general, una calidad (Q) sobre 20 se considera buena, ¿porqué?: El valor Q se define como una propiedad que está logaritmicamente relacionada con la probabilidad de que una base nucleotídica sea mal secuenciada, Q = -10log(P). Así, un valor Q   de 20 significaría un error de 1 base cada 100, dando una precisión del 99%. y viendo nuestro reporte, tenemos una buena secuenciación.
+
 ![](../images/fastqc1.png)
+
 Otro aspecto que vale la pena revisar es el **%GC** (contenido Guanina-Citosina), un valor usado para clasificar organismos y en este caso para corroborar que lo que se secuenció sea efectivamente lo que queremos, para eso ambas curvas (teórica y real), deben ser similares y de un solo peak.
 ![](../images/fastqc2.png)
 FastQC en este caso nos dice que hay algo malo con el contenido de Kmer (un Kmer se puede definir como todos los sub-read de nuestro read de largo definido y usado en diferentes aplicaciones. [Para ver mas información acerca de los Kmer pinche aquí](https://en.wikipedia.org/wiki/K-mer)).
