@@ -20,7 +20,7 @@ Requisitos:
 * R >= v3.3.1
 	* ggplot2
 	* ape
-* Reads: Si no tienes lecturas de secuenciación, puedes descargar las que se usaron en este workshop [aquí](#), son de una Porphyromonas gingivalis.
+* Reads: Si no tienes lecturas de secuenciación, puedes descargar las que se usan en este workshop [aquí](https://dl.dropboxusercontent.com/u/73361402/pg_reads_R1-R2.zip), son un set reducido de lecturas de una Porphyromonas gingivalis.
 
 **Recomendación para el curso: siempre ten en cuenta donde estas ubicado en la terminal, así evitaras errores como "no such file or directory"**
 
@@ -228,7 +228,7 @@ Estas son solo algunas estadísticas básicas, también existen otras como el N9
 ### Paso 3.3: Ensamble con referencia
 Ensamblar reads usando una referencia permite obtener un genoma tan bueno como lo sea la referencia, es decir, nuestras reads solo se acotaran al alineamiento de nuestra referencia y heredará algunas estadísticas básicas como el N50 y L50. Manos a la obra!
 
-Lo primero es descargar un genoma de referencia, en nuestro caso, descargaremos el genoma de [Porphyromonas gingivalis ATCC 33277](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef.fna.zip), si buscas otro genoma puedes consultar [la página web de NCBI](https://www.ncbi.nlm.nih.gov/genome/).
+Lo primero es descargar un genoma de referencia, en nuestro caso, descargaremos el genoma de [Porphyromonas gingivalis ATCC 33277](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef.fna.zip) (y lo descomprimimos), si buscas otro genoma puedes consultar [la página web de NCBI](https://www.ncbi.nlm.nih.gov/genome/).
 
 Este genoma de referencia posee las siguientes características:
 
@@ -242,36 +242,36 @@ Si nos fijamos, la referencia solo tiene 1 cromosoma, es decir, no está fragmen
 
 	#entramos en la carpeta
 	cd paso3
-	bowtie2-build --threads 16 pgRef.fna pgRef_index
+	bowtie2-build --threads 4 pgRef.fna pgRef_index
 
 Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El siguiente paso es alinear los reads, de cualquier forma, si no lograste indexar el genoma por A B C motivos, pincha [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef_index.zip) para descargarlos y ponerlos en la carpeta paso3.
 
 	#siguiente paso: alinear
-	bowtie2 -x pgRef_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg_ref.sam --end-to-end --very-sensitive --threads 16
+	bowtie2 -x pgRef_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg_ref.sam --end-to-end --very-sensitive --threads 4
 
 Aquí uno tendería a pensar que todas nuestras reads se alinearon y si revisamos el output de bowtie2 nos daremos cuenta que esto no es así:
 
-	1060210 reads; of these:
-	  1060210 (100.00%) were paired; of these:
-	    203899 (19.23%) aligned concordantly 0 times
-	    807208 (76.14%) aligned concordantly exactly 1 time
-	    49103 (4.63%) aligned concordantly >1 times
+	243558 reads; of these:
+	  243558 (100.00%) were paired; of these:
+	    48202 (19.79%) aligned concordantly 0 times
+	    184228 (75.64%) aligned concordantly exactly 1 time
+	    11128 (4.57%) aligned concordantly >1 times
 	    ----
-	    203899 pairs aligned concordantly 0 times; of these:
-	      36469 (17.89%) aligned discordantly 1 time
+	    48202 pairs aligned concordantly 0 times; of these:
+	      8346 (17.31%) aligned discordantly 1 time
 	    ----
-	    167430 pairs aligned 0 times concordantly or discordantly; of these:
-	      334860 mates make up the pairs; of these:
-	        310032 (92.59%) aligned 0 times
-	        17096 (5.11%) aligned exactly 1 time
-	        7732 (2.31%) aligned >1 times
-	85.38% overall alignment rate
+	    39856 pairs aligned 0 times concordantly or discordantly; of these:
+	      79712 mates make up the pairs; of these:
+	        73841 (92.63%) aligned 0 times
+	        4069 (5.10%) aligned exactly 1 time
+	        1802 (2.26%) aligned >1 times
+	84.84% overall alignment rate
 
-Tenemos un 85.38% de reads alineadas (gran porcentaje por cierto), el resto probablemente pertenecen a contaminación (que es algo mas común de lo que se piensa), o quizás es alguna sección que no existe en el genoma de referencia y que si existe en el ensamble *denovo*, etc.
+Tenemos un 84.84% de reads alineadas (gran porcentaje por cierto), el resto probablemente pertenecen a contaminación (que es algo mas común de lo que se piensa), o quizás es alguna sección que no existe en el genoma de referencia y que si existe en el ensamble *denovo*, etc.
 
 Bowtie2 nos dará como resultado un archivo SAM (Sequence Aligment Map) con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). Al cual someteremos a una curiosa linea de código que nos dará solo los reads que han alineado con el genoma de referencia y de paso transformamos el formato a BAM para ahorrar espacio.
 
-	samtools view -Sbh -F 0x4 --threads 16 pg_ref.sam |samtools sort -@16 > mapped_ref.bam
+	samtools view -Sbh -F 0x4 --threads 4 pg_ref.sam |samtools sort -@4 > mapped_ref.bam
 
 Donde:
 
@@ -284,11 +284,11 @@ Donde:
 
 Extraemos el consenso de las reads alineadas:
 	
-	samtools mpileup -E -uf pgRef.fna mapped_ref.bam |bcftools call -c - |vcfutils.pl vcf2fq > pg_consensus.fasta
+	samtools mpileup -E -uf pgRef.fna mapped_ref.bam |bcftools call -c - |vcfutils.pl vcf2fq > pg_consensus.fastq
 	
 Finalmente transformamos el formato fastq a fasta.
 
-	seqtk seq -A pg_consensus.fastq > pg_consensus.fa
+	seqtk seq -A pg_consensus.fastq > pg_consensus.fasta
 
 	#salimos de la carpeta
 	cd ..
@@ -307,11 +307,11 @@ Parecido en el ensamble con referencia, alinearemos las reads filtradas en el pa
 	mkdir paso4
 	#entramos en la carpeta
 	cd paso4
-	bowtie2-build --threads 16 ../paso3/pg_assembly/filter500.fasta pg_index
+	bowtie2-build --threads 4 ../paso3/pg_assembly/filter500.fasta pg_index
 
 Esto generará 6 archivos que representan el ensamble indexado para bowtie2. El siguiente paso es alinear los reads, de cualquier forma, si no lograste indexar el genoma por A B C motivos, pincha [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso4/pg_index.zip) para descargarlos y ponerlos en la carpeta paso4
 
-	bowtie2 -x pg_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg.sam --end-to-end --very-sensitive --threads 16
+	bowtie2 -x pg_index -1 ../paso2/pass_1.fastq -2 ../paso2/pass_2.fastq -S pg.sam --end-to-end --very-sensitive --threads 4
 
 Esto nos dará (igual que en el ensamble con referencia), un archivo SAM (Sequence Aligment Map), con toda la información del alineamiento, ([aquí puedes encontrar mas información acerca del formato SAM](https://samtools.github.io/hts-specs/SAMv1.pdf)). 
 
@@ -389,7 +389,7 @@ Ahora que sabemos que nuestro ensamble está bien (*denovo* o con referencia), e
 	#entramos en la carpeta
 	cd paso5
 	#ejecutamos esta linea de código para invocar a prokka, (usaremos el ensamble denovo, tu puedes usar el que mas te guste :D).
-	prokka ../paso3/pg_assembly/filter500.fasta --outdir pg_annot --prefix pg --addgenes --centre e --locustag l --evalue 1e-5 --cpus 16
+	prokka ../paso3/pg_assembly/filter500.fasta --outdir pg_annot --prefix pg --addgenes --centre e --locustag l --evalue 1e-5 --cpus 2
 
 Donde:
 
