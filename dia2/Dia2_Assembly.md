@@ -377,7 +377,7 @@ Ahora estamos listos para graficar!, para eso solo copia este feo pero útil có
 	  
 Esto dará como resultado el siguiente gráfico que puedes guardar en la pestaña Export en el cuadro de la derecha de Rstudio:
 ![](../images/coverage_denovo.png)
-Como vemos, el coverage a lo largo del genoma es homogéneo salvo algunas zonas pequeñas, y de acuerdo a la definición de este, tenemos que nuestro genoma esta cubierto aproximadamente 50 veces, un muy buen resultado.
+Como vemos, el coverage a lo largo del genoma es homogéneo salvo algunas zonas pequeñas, y de acuerdo a la definición de este, tenemos que nuestro genoma esta cubierto aproximadamente 50 veces, un buen resultado.
 
 ## Paso 5: Anotación de ensambles
 El proceso de anotación de un genoma (o alguna secuencia), se refiere a localizar algún patron (o muchos), dentro de una secuencia y asignarle un significado cada una de esas secciones para ser interpretada por nosotros.
@@ -421,17 +421,18 @@ Esto resultará en 11 archivos. No te preocupes, no los usaremos todos, solo te 
 Puede que no estén todos los archivos, dependiendo de los parámetros con los que fue invocado prokka, aún así los archivos mas usados son: .fna, .ffn, .faa
 
 veamos que estadísticas nos dice el archivo pg.txt
-
-	organism: Genus species strain 
-	contigs: 67
-	bases: 2268869
-	CDS: 1931
-	tRNA: 47
-	tmRNA: 1
-	gene: 1979
-	repeat_region: 3
 	
-prokka encontró en nuestros 67 contigs (archivo .fna), encontró 1931 CDS que podemos encontrar el archivo .faa, 1979 genes que los podemos encontrar en el archivo .ffn. si tienes problemas para obtener la anotación, descárgala pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/pg_annot.zip)
+	organism: Genus species strain 
+	contigs: 143
+	bases: 2306476
+	rRNA: 7
+	gene: 2011
+	CDS: 1955
+	tRNA: 48
+	repeat_region: 3
+	tmRNA: 1
+	
+prokka encontró en nuestros 143 contigs (archivo .fna), encontró 1955 CDS que podemos encontrar el archivo .faa, 2011 genes que los podemos encontrar en el archivo .ffn. si tienes problemas para obtener la anotación, descárgala pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/pg_annot.zip)
 
 Finalmente podemos visualizar el .gbk con [Artemis](http://www.sanger.ac.uk/science/tools/artemis), un software de Sanger Institute, con el que gráficamente podemos ver el .gff **[click derecho en el gff -> abrir con Artemis]** y buscar algún gen específico, o alguna zona de nuestro interés en el genoma, etc.
 
