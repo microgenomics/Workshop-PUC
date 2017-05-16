@@ -14,6 +14,7 @@ Requisitos:
 * Prokka >= v1.12
 * R >= v3.3.1
 	* ggplot2
+	* ape
 * Reads: Si no tienes lecturas de secuenciación, puedes descargar las que se usaron en este workshop [aquí](#)
 
 ### Paso 1: Revisar calidad de los reads
