@@ -1,4 +1,7 @@
+![banner](../images/logocbibhorizontal.png)
+
 # Preprocesamiento de datos propios, Control de calidad. Análisis básicos en R
+------
 
 En este práctico aprenderemos los pasos esenciales que se deben realizar para obtener un buen ensamble, tanto si lo hacemos *denovo* o si utilizamos una *referencia*, a partir de lecturas de una secuenciación (**reads**). Se debe tener en cuenta que mientras más buena sea una secuenciación, mejor será su ensamble.
 
@@ -7,17 +10,17 @@ Requisitos:
 * fastQC >= v0.11.5
 * Prinseq-lite >= v0.20.4
 * SPAdes >= v3.10.1
-* Quast >= v4.1
 * Bowtie2 >= v2.2.9
 * Samtools >= v1.3.1
 * Bedtools >= v2.26.0
 * Bcftools >= v1.3.1
 * seqtk >= v1.0
 * Prokka >= v1.12
+* Artemis
 * R >= v3.3.1
 	* ggplot2
 	* ape
-* Reads: Si no tienes lecturas de secuenciación, puedes descargar las que se usaron en este workshop [aquí](#)
+* Reads: Si no tienes lecturas de secuenciación, puedes descargar las que se usaron en este workshop [aquí](#), son de una Porphyromonas gingivalis.
 
 ### Paso 1: Revisar calidad de los reads
 
@@ -424,3 +427,7 @@ veamos que estadísticas nos dice el archivo pg.txt
 	repeat_region: 3
 	
 prokka encontró en nuestros 67 contigs (archivo .fna), encontró 1931 CDS que podemos encontrar el archivo .faa, 1979 genes que los podemos encontrar en el archivo .ffn. si tienes problemas para obtener la anotación, descárgala pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso5/pg_annot.zip)
+
+Finalmente podemos visualizar el .gbk con [Artemis](http://www.sanger.ac.uk/science/tools/artemis), un software de Sanger Institute, con el que gráficamente podemos ver el .gff **[click derecho en el gff -> abrir con Artemis]** y buscar algún gen de nuestro interés, o alguna región
+
+![](../images/artemis.png)
