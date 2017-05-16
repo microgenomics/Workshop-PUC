@@ -83,7 +83,7 @@ El número anormal de kmers también desapareció con el tratamiento y aunque au
 
 en otras palabras, hemos hecho el control de calidad (QC) a nuestras reads. Hurra!, si quieres revisar en detalle como resultó el proceso puedes descargar el archivo pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso2/pg_R1_despues.html.zip)
 
-##Paso 3: Ensamble
+## Paso 3: Ensamble
 Ya obtenidas nuestras reads de confianza, el siguiente paso es ensamblarlas. En simples palabras cuando se tienen reads ya procesadas, uno puede escoger entre 2 caminos para obtener un genoma, un ensamble **denovo** o un ensamble **con referencia**:
 
 * **Denovo**: significa que nuestras reads se unieran entre ellas mediante overlapping, hasta formar un super gran read (o varios), que represente el genoma en cuestión.
@@ -127,7 +127,7 @@ para ello ejecutaremos el siguiente comando:
 Listo!, tenemos nuestro genoma ensamblado. Si no pudiste obtener tu ensamble por falta de recursos, puedes descargar el resultado de este paso pinchando [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pg_assembly/filter500.fasta).
 
 
-###Paso 3.2: Estadísticas básicas para un ensamble denovo
+### Paso 3.2: Estadísticas básicas para un ensamble denovo
 
 Ya solo nos queda evaluar que tan bien salió nuestro ensamble. Para esto utilizaremos Rstudio, una interfaz gráfica para el código R con el que manipularemos nuestro ensamble, esto mediante la libreria "ape".
 
@@ -215,7 +215,7 @@ L50 #11
 ```
 Estas son solo algunas estadísticas básicas, también existen otras como el N90 (largo del contig cuya suma con el resto otorga el 90% del largo del genoma), L90 (suma de contigs que obtienen el N90), N's por cada 100kb, etc. Por el momento, estas son suficientes para concluir que tenemos un buen ensamble. Ya solo falta saber cuantas veces esta cubierto nuestro genoma.
 
-###Paso 3.3: Ensamble con referencia
+### Paso 3.3: Ensamble con referencia
 Ensamblar reads usando una referencia permite obtener un genoma tan bueno como lo sea la referencia, es decir, nuestras reads solo se acotaran al alineamiento de nuestra referencia y heredará algunas estadísticas básicas como el N50 y L50. Manos a la obra!
 
 Lo primero es descargar un genoma de referencia, en nuestro caso, descargaremos el genoma de [Porphyromonas gingivalis ATCC 33277](https://github.com/microgenomics/Workshop-PUC/raw/master/dia2/paso3/pgRef.fna), si buscas otro genoma puedes consultar [la página web de NCBI](https://www.ncbi.nlm.nih.gov/genome/).
