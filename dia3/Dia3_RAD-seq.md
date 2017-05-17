@@ -1,3 +1,11 @@
+![banner](https://github.com/microgenomics/Workshop-PUC/blob/master/images/logocbibhorizontal.png?raw=true)
+
+## Microbial Genomics Lab
+
+[Katterinne Mendez](https://github.com/Katterinne) - [Sandro Valenzuela-Diaz](https://github.com/Sanrrone) - [Eduardo Castro-Nallar](https://github.com/ecastron)
+
+---
+
 ###### Día 3 - Práctico: procesamiento de datos propios.
 # Técnicas de representación reducida del genoma
 
@@ -105,6 +113,8 @@ Primero, utiliza `-h` para conocer todas las opciónes disponibles en el program
 
 ... hacer esto también es útil para *checkear* si el programa está disponible en tu computadora.
 
++ **Nota**: Los **datos ejemplo** que descargáste anteriormente ([aquí](https://dl.dropboxusercontent.com/u/73361402/PRJNA195932_18subset.zip)) corresponden a los archivos FASTQ que observamos en el recuadro de arriba, ósea al *output* del actual paso **pre-procesamiento de _reads_**. Por lo que si estás utilizando los datos ejemplo, deberás comenzar después de éste paso, ya que, Catchen y cols., (2013) primero realizaron el *demultiplexed* de los *reads* para luego subir los datos específicos de cada muestra a la base de datos SRA de NCBI.
+
 Ahora, suponiendo que te encuentras en una carpeta en la cual tenemos las carpetas `raw_data/` donde están los archivos FASTQ y `etapa_1/` donde guardarémos los resultados de la Etapa 1. Además del archivo de texto `barcode-sample_list` que indica la secuencia del *barcodes*/*index* y luego el nombre de la muestra correspondiente, así:
 
 	# en éste caso el archivo de texto consta de 2 columnas (barcode<tab>nombre_muestra) y 18 filas o líneas (una por cada muestra).
@@ -174,8 +184,6 @@ De esta primera etapa esperamos obtener tantos archivos FASTQ como individuos o 
 	cs_1335-54.fastq   pl_1537-27.fastq   stl_1274-72.fastq
 	ms_2067-51.fastq   rb_2240-128.fastq  wc_1218-07.fastq
 	ms_2067-66.fastq   rb_2240-158.fastq  wc_1221-02.fastq
-
-+ **Nota**: Los datos ejemplo que descargáste anteriormente ([aquí](https://dl.dropboxusercontent.com/u/73361402/PRJNA195932_18subset.zip)) corresponden a los archivos FASTQ que observamos en el recuadro de arriba, ósea al *output* del pre-procesamiento de *reads*. Por lo que si estás utilizando los datos ejemplo, deberás comenzar desde aquí, ya que, Catchen y cols., (2013) primero realizaron el *demultiplexed* de los *reads* para luego subir los datos por cada muestra a la base de datos SRA de NCBI.
 
 Ya teniendo los *reads* pre-procesados, podemos continuar con el ensamble de los *contigs* (que corresponderían a los *loci*) para luego hacer los análisis de diversidad genética.
 
@@ -305,8 +313,48 @@ Dependiendo las capacidades de tu computadora, a `bowtie2` le podría tomar de 3
 
 SAM (*Sequence Alignment/Map*) es un formato de archivos que incluye toda la información acerca de un alineamiento de *reads* contra largas sequencias de referencia, puedes leer al respecto [aquí](https://samtools.github.io/hts-specs/SAMv1.pdf).
 
-+ Puedes descargar los 18 archivos SAM [aquí]().
+Con el fin de ahorrar espacio de disco, trasformaremos de formato SAM a BAM. BAM (*Binary Alignment/Map*) tiene la misma información que el archivo SAM, pero escrito en [binario](https://en.wikipedia.org/wiki/Binary_code) (lenguaje mínimo de procesamiento computacional), por lo que es un archivo mas liviano (ocupa menos espacio de disco).
+
+Para transformar archivos SAM a BAM, usamos `samtools`:
+
+	# Como debemos transformar 18 archivos, usarémos ciclo while...
+	$ vi sam2bam.bash
+	# Presiona la tecla i para poder editar y escribe:
+	
+	while read sample
+	do
+
+		samtools view -b "$sample".sam -o "$sample".bam
+	
+	done < samples_list
+	
+	# Presiona la tecla esc para salir del editor y escribe:
+	:wq
+	# Lo que te permite guardar y salir del archivo sam2bam.bash
+	$ bash sam2bam.bash
+	$ ls
+	cr_1533-05.bam   cs_1335-54.bam   pcr_1211-11.bam
+	pl_1537-27.bam   sj_1879-31.bam   stl_1274-72.bam
+	cr_1533-17.bam   ms_2067-51.bam   pcr_1312-13.bam
+	rb_2240-128.bam  sj_1879-34.bam   wc_1218-07.bam
+	cs_1335-17.bam   ms_2067-66.bam   pl_1537-11.bam
+	rb_2240-158.bam  stl_1274-63.bam  wc_1221-02.bam
+
++ Puedes descargar los 18 archivos BAM [aquí](https://dl.dropboxusercontent.com/u/73361402/18BAM_files.zip).
 
 Ahora que tienes los archivos SAM (alineamientos) de cada muestra, estás listo para seguir adelante con la *pipeline* y realizar los análisis de genética poblacional.
 
 #### *De Novo*
+
+Sino cuentas con genoma de referencia, no es necesario que realices un proceso intermedio. `Stacks` incluye el ensamble *de novo* de *loci* para cada individuo, sólo necesitas los *reads* en formato FASTQ o FASTA.
+
+### Pipeline: Ref-Map.pl / DeNovo-Map.pl
+
+`Stacks` cuenta con dos programas que ejecutan de forma automática las 4 etapas restantes de la *pipeline*. Las cuales, consisten primero en agrupar las secuencias de cada individuo en *loci* para luego buscar SNP (*Single Nucleotide Polymorphism*) en cada *locus* ensamblado, usando el programa `pstacks` (para datos con referencia) o `ustacks` (para datos ensamblados *de novo*). Segundo, el programa `cstacks` genera el catálogo de *loci*, el cual es básicamente un catálogo de secuencias que presentan las diferentes variantes, diferentes *locus* encontrados en los datos de todos los individuos. Tercero, el programa `sstacks` realiza un *match* (comparación) de los datos de cada individuo contra el catálago. Finalmente, el programa `populations` calculará varias estadísticas de genómica poblacional como π y Fst y entregará varios archivos de salida (*outputs*) útiles para otros programas que revisaremos mas adelante.
+
+Los dos programas son:
+
++ `ref_map.pl` Debes utilizarlo si cuentas con un genoma de referencia y si ya realizaste el alineamiento. Los **inputs** de `ref_map.pl` son los archivos SAM o BAM que obtuviste del alineamiento de los *reads* en contra del genoma de referencia.
+
++ `denovo_map.pl` Debes utilizarlo sino cuentas con un genoma de referencia. Los **inputs** de `denovo_map.pl` son los *reads* pre-procesados en formato FASTQ o FASTA.
+
