@@ -52,6 +52,73 @@ Descarga Stacks [aquí](http://catchenlab.life.illinois.edu/stacks/)
 	$ make
 	$ make install
 
+### Instalar [MySQL](https://dev.mysql.com)
+
+#### Mac
+
+Descarga el DMG de MySQL desde la [página](https://dev.mysql.com/downloads/mysql/) o [aquí]().
+
+Haz doble clic en el archivo DMG y sigue las instrucciónes, pon atención en el mensaje que aparecerá durante la instalación de MySQL, como el que se muestra en la siguiente imágen, y toma nota de la contraseña que aparece, la necesitarás mas adelante.
+
+![mysql_installer](https://github.com/microgenomics/Workshop-PUC/blob/master/images/mysql_installer.png?raw=true)
+
+Ahora dirígete a `System Preferences` -> `MySQL` y haz clic en `Start MySQL Server`, deberías ver algo así:
+
+![mysql_start](https://github.com/microgenomics/Workshop-PUC/blob/master/images/mysql.png?raw=true)
+
+Ahora abre la terminal y escribe...
+
+	$ mysql -u root -p
+	# Aparecerá un mensaje pidiendo una contraseña, la misma que el instalador de MySQL te dió en el paso anterior.
+	$ Enter password: XoryZ!lea3/y
+	# Verás algo así...
+	
+	Welcome to the MySQL monitor.  Commands end with ; or \g.
+	Your MySQL connection id is 194
+	Server version: 5.7.18 MySQL Community Server (GPL)
+	
+	Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.
+	
+	Oracle is a registered trademark of Oracle Corporation and/or its
+	affiliates. Other names may be trademarks of their respective owners.
+
+	Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+	
+	mysql> 
+	
+	# La contraseña que nos entrego el instalador de MySQL es temporal, por lo que debemos cambiarla...
+	# Aún en mysql escribe la siguiente línea de comando para cambiar la contraseña por cualquier otra de tu elección...
+	$ mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyPassword';
+	# Asegúrate de reemplazar MyPassword por tu nueva contraseña
+	# Para salir de mysql escribe:
+	$ quit;
+	
+	# Puedes volver a entrar a mysql, esta vez, escribiendo tu nueva contraseña, para asegurar que el cambio fue exitoso!
+	# Siempre que quieras entrar a mysql escribe:
+	$ mysql -u root -p
+	# Y luego escribes tu contraseña (asegurate de no olvidarla!)
+	# Para salir de mysql escribe:
+	$ mysql> quit;
+
+Excelente! `MySQL` está disponible en tu computadora. Sólo nos hace falta modificar un archivo de configuración, para que `Stacks` pueda acceder a `mysql`:
+
+	$ cd /usr/local/Cellar/stacks/1.46/share/stacks/sql/
+	$ mv mysql.cnf.dist mysql.cnf
+	$ vi mysql.cnf
+	# Se abrirá el archivo mysql, presiona la tecla i para poder editar, verás algo así...
+	
+	[client]
+	user=root
+	password=XoryZ!lea3/y
+	host=localhost
+	port=3306
+	local-infile=1
+	
+	# En 'password=' cambia la antigua contraseña por la nueva contraseña
+	$ cd
+
+Listo!
+
 ---
 
 ## Manos a la obra !!
@@ -266,6 +333,8 @@ Como las muestras provienen de individuos diferentes, debemos realizar alineamie
 	# Excelente! como son 18 muestras, el archivo samples_list debiese tener 18 líneas
 	$ wc -l samples_list 
       18 samples_list
+
+...también puedes descargar el archivo `samples_list` [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia3/samples_list.zip).
       
 2.- Revisa las opciónes disponibles en el programa `bowtie2` y define los parámetros a utilizar. Recuerda que puedes obtener ésta información escribiendo `$ bowtie2 -h` en la terminal o [aquí](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#command-line).
 
@@ -358,3 +427,33 @@ Los dos programas son:
 
 + `denovo_map.pl` Debes utilizarlo sino cuentas con un genoma de referencia. Los **inputs** de `denovo_map.pl` son los *reads* pre-procesados en formato FASTQ o FASTA.
 
+Recuerda revisar detalladamente las opciónes disponibles de los programas `ref_map.pl` y `denovo_map.pl`, así puedes setear los parámetros mas adecuados para tus datos y objetivos. Usa la opción `-h`: `$ ref_map.pl -h` o `$ denovo_map.pl -h`. O revisar el manual detallado: [ref_map](http://catchenlab.life.illinois.edu/stacks/comp/ref_map.php) o [denovo_map](http://catchenlab.life.illinois.edu/stacks/comp/denovo_map.php).
+
+#### ref_map.pl
+
+Primero, debes crear un mapa poblacional, éste es un archivo de texto con dos columnas: el nombre de la muestra en la primera columna y la población a la que corresponde. Sino le proporcionamos el mapa poblacional al programa, éste asumirá que todas las muestras pertenecen a la misma población.
+
+Para los datos ejemplo, el mapa poblacional es el siguiente:
+
+	cr_1533-05	cr
+	cr_1533-17	cr
+	cs_1335-17	cs
+	cs_1335-54	cs
+	ms_2067-51	ms
+	ms_2067-66	ms
+	pcr_1211-11	pcr
+	pcr_1312-13	pcr
+	pl_1537-11	pl
+	pl_1537-27	pl
+	rb_2240-128	rb
+	rb_2240-158	rb
+	sj_1879-31	sj
+	sj_1879-34	sj
+	stl_1274-63	stl
+	stl_1274-72	stl
+	wc_1218-07	wc
+	wc_1221-02	wc
+
+... puedes descargarlo [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia3/population_map.zip).
+
+#### denovo_map.pl
