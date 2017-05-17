@@ -1,0 +1,17 @@
+Estadísticas iniciales
+Peso de los archivos
+-rw-r--r--  1 castrolab04  staff   3.5K May 17 18:47 muestra1.fastq
+-rw-r--r--  1 castrolab04  staff   4.6K May 17 18:31 muestra2.fastq
+-rw-r--r--  1 castrolab04  staff   8.9K May 17 18:32 muestra3.fastq
+-rw-r--r--  1 castrolab04  staff   4.7K May 17 18:32 muestra4.fastq
+-rw-r--r--  1 castrolab04  staff   6.8K May 17 18:32 muestra5.fastq
+-rw-r--r--  1 castrolab04  staff   6.4K May 17 18:33 muestra6.fastq
+-rw-r--r--  1 castrolab04  staff   5.0K May 17 18:33 muestra7.fastq
+Cantidad de secuencias
+10 muestra1.fastq
+12 muestra2.fastq
+20 muestra3.fastq
+11 muestra4.fastq
+15 muestra5.fastq
+15 muestra6.fastq
+10 muestra7.fastq

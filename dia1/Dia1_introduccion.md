@@ -349,6 +349,99 @@ en nuestro caso sería
 En este caso la sintaxis del ciclo **for** la acompañamos de una expresión regular donde apuntamos a "todo (`*`) lo que termine con `.fast` y además el último carácter debe terminar en `a` o `q`". El resultado de esta expresión regular es tomado por **ls** y luego por el ciclo **for**, agregandose a una variable (la misma variable se renueva con otro valor en cada "vuelta").
 
 ## Aplicando todo
-Primero descarga este pequeño set de secuencias [aquí](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/problem1.zip). Tenemos el siguiente caso: Han llegado secuencias NGS nuestro laboratorio, y nuestro jefe quiere rápidamente unas estadísticas iniciales, como el número secuencias, cuanto pesan los archivos, mostrar estos resultados para cada muestra en un archivo llamado reporte.txt
+Primero descarga y descomprime este pequeño set de secuencias [aquí](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/problem1.zip). Tenemos el siguiente caso: Han llegado secuencias NGS a nuestro laboratorio en formato fastq, y nuestro jefe quiere rápidamente unas estadísticas iniciales, como el número de secuencias, cuanto pesan los archivos y mostrar estos resultados para cada muestra en un archivo llamado reporte.txt.
 
+Primero entramos en la carpeta descomprimida
+
+	cd problema1
+
+podemos empezar escribiendo el reporte con un título y guardarlo mientras en el archivo requerido.
+
+	echo "Estadísticas iniciales" > reporte.txt
+	
+listamos el directorio para saber cuantos archivos hay
+	
+	ls
+	muestra1.fastq	muestra3.fastq	muestra5.fastq	muestra7.fastq
+	muestra2.fastq	muestra4.fastq	muestra6.fastq
+	
+aquí podemos de inmediato responder la pregunta de cuanto pesan los 
+archivos tan solo agregando el parámetro antes usado -lh
+
+	ls -lh
+	-rw-r--r--  1 castrolab04  staff   3.4K May 17 18:31 muestra1.fastq
+	-rw-r--r--  1 castrolab04  staff   4.6K May 17 18:31 muestra2.fastq
+	-rw-r--r--  1 castrolab04  staff   8.9K May 17 18:32 muestra3.fastq
+	-rw-r--r--  1 castrolab04  staff   4.7K May 17 18:32 muestra4.fastq
+	-rw-r--r--  1 castrolab04  staff   6.8K May 17 18:32 muestra5.fastq
+	-rw-r--r--  1 castrolab04  staff   6.4K May 17 18:33 muestra6.fastq
+	-rw-r--r--  1 castrolab04  staff   5.0K May 17 18:33 muestra7.fastq
+
+y esto podemos guardarlo mientras en nuestro archivo reporte .txt
+
+	echo "Peso de los archivos" >> reporte.txt
+	ls -lh *.fastq >> reporte.txt
+	
+para resolver la petición de saber cuantas secuencias existen, recuerden que existe el comando **wc -l**
+
+	echo "Cantidad de secuencias" >> reporte.txt
+	wc -l muestra1.fastq
+	40 muestra1.fastq
+	
+	en este caso son 40 líneas en el fastq, pero recordemos que en realidad un fastq contiene 1 secuencia cada 4 líneas.
+	Así que para obtener el número real, debemos dividir el número de wc en 4. 
+	La forma mas rápida es con un pequeño truco en "awk"
+	
+	wc -l muestra1.fastq |awk '{print $1/4, $2}'
+	40
+	
+ahora veamos que significa este nuevo truco (ya un poco más avanzado), llamado awk: todo código awk puesto en la terminal va encerrado entre comillas simples y en bloques de llaves `'{}'`. `print` es una función de awk para imprimir en pantalla la variable que este al lado de la función, en este caso `$1/4`, que a su vez `$1` significa **columna 1**, y como sabemos que la primera columna es el número que entrega **wc -l** lo dividimos por 4 (`/4`), por ultimo `, $2` significa que habrá un espacio e imprimirá la columna 2 (el nombre de la muestra), resultando así en `'{$1/4, $2}'`.
+
+Ahora bien, resultaría un poco tedioso hacer este comando 7 veces (incluso hay proyectos con mas de 700 muestras), por lo que haremos uso del ciclo para calcular el número de secuencias.
+
+	Recuerden que para acceder al valor de una variable se antepone "$"
+	for mifastq in $(ls *.fastq)
+	do
+		wc -l $mifastq |awk '{print $1/4, $2}'
+	done
+	
+	10 muestra1.fastq
+	12 muestra2.fastq
+	20 muestra3.fastq
+	11 muestra4.fastq
+	15 muestra5.fastq
+	15 muestra6.fastq
+	10 muestra7.fastq
+
+y guardamos este resultado en reporte.txt
+
+	for mifastq in $(ls *.fastq)
+	do
+		wc -l $mifastq |awk '{print $1/4, $2}'
+	done >> reporte.txt
+	
+Y listo! podemos ver el resultado mostrando el reporte con el comando **cat**
+	
+	cat reporte.txt
+	Estadísticas iniciales
+	Peso de los archivos
+	-rw-r--r--  1 castrolab04  staff   3.5K May 17 18:47 muestra1.fastq
+	-rw-r--r--  1 castrolab04  staff   4.6K May 17 18:31 muestra2.fastq
+	-rw-r--r--  1 castrolab04  staff   8.9K May 17 18:32 muestra3.fastq
+	-rw-r--r--  1 castrolab04  staff   4.7K May 17 18:32 muestra4.fastq
+	-rw-r--r--  1 castrolab04  staff   6.8K May 17 18:32 muestra5.fastq
+	-rw-r--r--  1 castrolab04  staff   6.4K May 17 18:33 muestra6.fastq
+	-rw-r--r--  1 castrolab04  staff   5.0K May 17 18:33 muestra7.fastq
+	Cantidad de secuencias
+	10 muestra1.fastq
+	12 muestra2.fastq
+	20 muestra3.fastq
+	11 muestra4.fastq
+	15 muestra5.fastq
+	15 muestra6.fastq
+	10 muestra7.fastq
+		
+Y listo!, ya podemos enviar el reporte a nuestro jefe, por mientras, seguiremos con el tutorial pero ahora desde una perspectiva desde el código de R. No olviden salir de la carpeta para continuar el tutorial
+	
+	cd ..
 
