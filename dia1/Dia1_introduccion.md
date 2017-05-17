@@ -1,23 +1,23 @@
 ![banner](../images/logocbibhorizontal.png)
 # Introducción a la Terminal y R.
 --------
-Hola!, bienvenidos al primer práctico de uso de terminal y R, aquí aprenderás los comandos esenciales usados en la terminal (o consola de comandos, o shell), y que son la base en el manejo de cualquier proyecto que tenga bioinformática en él. Así qué... manos a la obra!.
+Hola!, bienvenidos al primer práctico de uso de terminal y R, aquí aprenderás los comandos esenciales usados en la terminal (o consola de comandos, o shell), y que son la base en el manejo de cualquier proyecto que tenga bioinformática en él. Así que... manos a la obra!.
 
-**Recordatorio: Nunca escribas variables, nombres de archivo o de carpetas con ESPACIOS. Los espacios son enemigos naturales de las terminales.**
+**Recordatorio: Nunca escribas variables, nombres de archivo o de carpetas con ESPACIOS o ACENTOS. Los espacios y acentos son enemigos naturales de las terminales.**
 
-## ¿Que es una Terminal?
+## ¿Qué es una Terminal?
 
 |	<img src="../images/terminal.png" alt="alt text" width="150"> | <img src="../images/terminal2.ico" alt="alt text" width="100">	| <img src="../images/terminal3.jpg" alt="alt text" width="200"> | <img src="../images/terminal4.jpg" alt="alt text" width="200"> |
 |:-:|:-:|:-:|:-:|
-|Esta es una terminal| esta también es una terminal| Esto es la matrix, se hacen cosas parecidas en bioinformática, así que consideremos esta una terminal también| Esto es un ramsomware, el virus que atacó a Movistar hace unos días, hecho para windows, esto no es una terminal.|
+|Esta es una terminal| Esta también es una terminal| Esto es la matrix, se hacen cosas parecidas en bioinformática, así que consideremos esta una terminal también| Esto es un ramsomware, el virus que atacó a Movistar hace unos días, hecho para windows, esto **no** es una terminal.|
 
-Una terminal es un intérprete de comandos, fundamental en los sistemas operativos para la interacción con el usuario ya que se escriben comandos y acciones en él, esto también es considerado un lenguaje de programación. En este practico solo nos concentraremos en las terminales basadas en Unix (Linux o Mac, los siento Windows esta vez no).
+Una terminal es un intérprete de comandos fundamental en los sistemas operativos para la interacción con el usuario, ya que, se escriben comandos y acciones en él. Realizar acciones seguidas en una terminal también es considerado programar, en cierta forma podemos ser hackers. En este practico solo nos concentraremos en las terminales basadas en Unix (Linux o Mac, los siento Windows esta vez no).
 
 ## ¿Qué puedo hacer con la terminal?
 Prácticamente todo lo que hace un computador, con una terminal tu ordenas lo que quieres y el computador lo hará, lo difícil es transmitir lo que realmente pensamos a la terminal.
 
 ## Primeras ordenes
-Cuando se aprende un nuevo lenguaje de programación, lo tradicional es hacer que el computador nos diga "Hola Mundo" en dicho lenguaje de programación. Así que primer paso: Abrir una terminal como esta:
+Cuando se aprende un nuevo lenguaje de programación, lo tradicional es hacer que el computador nos diga "Hola Mundo" en dicho lenguaje de programación. Así que el primer paso abrir una terminal como esta:
 ![](../images/openterminal.png)
 ahora usaremos el comando "echo" para que la terminal nos diga lo que queremos así que escribiremos: echo "Hola Mundo" y presionamos enter.
 ![](../images/hellow.png)
@@ -31,7 +31,7 @@ y ahora en la misma terminal, podemos decirle al computador que nos muestre los 
 	Despacito, Quiero respirar tu cuello despacito, Deja que te diga cosas al oído, Para que te acuerdes si no estás conmigo
 	
 ## Manejando directorios
-la terminal no solo sirve para realizar operaciones como una calculadora o hacer que escriba una canción, también es frecuentemente usado para manipular directorios, el primer paso en el uso de estos, es la creación de una carpeta, para ello el comando a usar se llama **mkdir**:
+La terminal no solo sirve para realizar operaciones como una calculadora o hacer que escriba una canción, también es frecuentemente usado para manipular directorios, el primer paso en el uso de estos, es la creación de una carpeta, para ello el comando a usar se llama **mkdir**:
 
 	mkdir dia1
 	esto creará una carpeta llamada dia1
@@ -262,6 +262,13 @@ Podemos usar las expresiones regulares con el comando **grep** para buscar algú
 	
 	esto nos muestra en cada archivo, en cada numero de línea el match que buscamos. 
 	Al buscar archivos con "*" estamos diciendo al comando grep que busque en todo lo que termine con .fasta
+
+Quizás puede servirnos solo contar el numero de match de nuestra secuencia, aquí el comando a utilizar es **wc** (word count):
+
+	grep -n "TATA" *.fasta |wc -l
+	4
+
+Usar `|` está dentro de la categoría de redireccionar al igual que `>`. `|` permite usar la salida del primer comando como entrada para el siguiente, en este caso el resultado anterior es tomado por **wc** que cuenta los caracteres y con el parámetro `-l` solo las líneas.
 	
 	
 ## Crea tu propio script
@@ -324,7 +331,7 @@ Cuando se trabaja en bioinformática, es normal que los archivos fasta o fastq s
 	
 Esto se volvería imposible de hacer si tenemos 1000 fastas, por eso es mejor usar un **ciclo for**. La estructura de un **for** es:
 
-	for mi_variable in $(comando)
+	for variable in $(comando)
 	do
 		comandos, scripts o recetas de cocina
 	done
@@ -336,3 +343,12 @@ en nuestro caso sería
 		gzip $mi_archivo
 	done
 	
+	ls *.fast[aq]
+	1.fasta.gz	2.fasta.gz	3.fasta.gz	test.fasta.gz	miprimer.fastq.gz
+
+En este caso la sintaxis del ciclo **for** la acompañamos de una expresión regular donde apuntamos a "todo (`*`) lo que termine con `.fast` y además el último carácter debe terminar en `a` o `q`". El resultado de esta expresión regular es tomado por **ls** y luego por el ciclo **for**, agregandose a una variable (la misma variable se renueva con otro valor en cada "vuelta").
+
+## Aplicando todo
+Primero descarga este pequeño set de secuencias [aquí](). Tenemos el siguiente caso: Han llegado secuencias NGS nuestro laboratorio, y nuestro jefe quiere rápidamente unas estadísticas iniciales, como el número secuencias, cuanto pesan los archivos, mostrar estos resultados en un archivo llamado reporte.txt
+
+
