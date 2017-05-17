@@ -53,8 +53,18 @@ ya sabemos donde estamos en nuestra terminal, ahora listemos los archivos en la 
 	Dia1_introduccion.md
 	
 	si nuestra carpeta esta vacía, no mostrará nada, de lo contrario mostrara todos los archivos y carpetas que estén allí.
+	si queremos ver los archivos con más información podemos agregar parámetros a ls como lo son -lh (long format in human readble format)
 	
-también en nuestra terminal podemos movernos entre esas carpetas y listar su contenido, para ello usaremos el comand **cd**,**ls** y **pwd**:
+	ls -lh
+	total 1
+	-rw-r--r--  1 castrolab04  staff    12K May 17 11:49 Dia1_introduccion.md
+
+	las primeras lineas y guiones hacen referencia a los permisos que tiene el archivo sobre el sistema (no nos preocuparemos de eso)
+	1 castrolab04 staff es la cantidad de usuarios y grupos (y los usuarios), que pueden acceder al archivo
+	12K es el peso del archivo
+	May 17 11:49, es la fecha y hora en la que creado o modificado el archivo por última vez.
+	
+También en nuestra terminal podemos movernos entre esas carpetas y listar su contenido, para ello usaremos el comando **cd**,**ls** y **pwd**:
 
 	pwd
 	/Users/castrolab04/Desktop/Workshop-PUC/dia1
@@ -128,4 +138,130 @@ Muy bien!, pero ha llegado la hora de decir adios a nuestro archivo. Para ello u
 
 Puede que resulten ser muchos comandos en un principio, pero solo la práctica hará que puedas dominarlos, y un dato curioso, **existen mas de 200 comandos** disponibles en tu computadora, y los usaremos **TODOS**.................................................es una broma, solo usaremos algunos como los ya vistos pero de forma mas integrativa.
 
-¿Conoces el archivo fasta?, es el formato por excelencia para guardar secuencias de ADN, ARN o Proteínas.
+Nota: Eventualmente se nos olvidarán como funcionan algunos comandos, pero cada uno tiene un manual, **man** es el comando que convoca a los manuales de los comandos:
+
+	man ls
+		S(1)                     BSD General Commands Manual                    LS(1)
+	
+	NAME
+	     ls -- list directory contents
+	
+	SYNOPSIS
+	     ls [-ABCFGHLOPRSTUW@abcdefghiklmnopqrstuwx1] [file ...]
+	
+	DESCRIPTION
+	     For each operand that names a file of a type other than directory, ls
+	     displays its name as well as any requested, associated information.  For
+	     each operand that names a file of type directory, ls displays the names
+	     of files contained within that directory, as well as any requested, asso-
+	     ciated information.
+	
+	     If no operands are given, the contents of the current directory are dis-
+	     played.  If more than one operand is given, non-directory operands are
+	     displayed first; directory and non-directory operands are sorted sepa-
+	     rately and in lexicographical order.
+	     
+Presiona "q" para salir
+
+¿Conoces el archivo fasta?, es el formato por excelencia para guardar secuencias de ADN, ARN o Proteínas, tiene el siguiente formato:
+
+	>header o identificador, suele tener información concisa acerca de la secuencia
+	GCAAGCGGCTAGCTAGCTACTACCAGCGATCACGAGCATCGATCGATGCT
+	GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
+	GCGCGCGCGCGCGCGCGCGCGGGGGGGGGGGGGGGCCCCCCCCCCCCCCC
+	GCAAGCGGCTAGCTAGCTACTACCAGCGATCACGAGCATCGATCGATGCT
+	GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
+	GCGCGCGCGCGCGCGCGCGCGGGGGGGGGGGGGGGCCCCCCCCCCCCCCC
+	
+creemos nuestro propio fasta!
+
+	primero crearemos el archivo 1.fasta solo con el header del archivo
+	echo ">mi_secuencia" > 1.fasta
+	ahora agregaremos una secuencia al final del archivo
+	echo "GCAAGCGGCTAGCTAGCTACTACCAGCGATCACGAGCATCGATCGATGCT" >> 1.fasta
+	y podemos agregar otra secuencia al final.
+	echo "GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA" >> 1.fasta
+	y otra
+	echo "GCGCGCGCGCGCGCGCGCGCGGGGGGGGGGGGGGGCCCCCCCCCCCCCCC" >> 1.fasta
+	
+ahora veamos nuestro archivo por la terminal!, usaremos el comando **cat**:
+
+	cat 1.fasta
+	>mi_secuencia
+	GCAAGCGGCTAGCTAGCTACTACCAGCGATCACGAGCATCGATCGATGCT
+	GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
+	GCGCGCGCGCGCGCGCGCGCGGGGGGGGGGGGGGGCCCCCCCCCCCCCCC
+	
+	Felicidades!, hemos hecho un archivo fasta
+	
+	repitamos el proceso pero el fasta deberá llamarse test.fasta
+	
+	echo ">mi_secuencia_2" > test.fasta
+	echo "PKCKPAEECKELAPCKAELKCKLEAPLKECKLAKCLAPEKCLPP" >> test.fasta
+	
+	Listo!
+	
+Si rápidamente queremos buscar algún patron en el fasta por ejemplo una pequeña secuencia "CGAT" podemos usar el comando grep:
+
+	grep -n "CGAT" 1.fasta
+	2:GCAAGCGGCTAGCTAGCTACTACCAGCGATCACGAGCATCGATCGATGCT
+	
+	su sintaxis humana sería: [comando + opciones] [patrón] [donde buscar patrón]
+
+Donde:
+
+* grep es el comando para buscar patrones
+* -n es un parámetro de grep para indicar en que número de linea encuentra el match
+* "CGAT" es el patron para buscar
+* 1.fasta es el archivo donde se buscara el patrón
+
+## Wildcard o Expresiones regulares
+Las wildcard o expresiones regulares, son símbolos que representan patrones, nos ayuda a aumentar nuestro umbral de match cuando queremos buscar algo. Por ejemplo, ¿que pasa si dentro de una carpeta con 100 archivos, solo queremos mostrar aquellos cuyo nombre empieza con algún número? esto se resolvería con 2 wildcard:
+ 
+ * [0-9] esta wildcard significa "todos los números enteros entre 0 y 9", también puede escribirse así: [0123456789]
+ * \* esta wildcard significa "todo"
+
+Combinadas serian "[0-9]*" y se interpretaría como, "todo lo que empieza entre 0 y 9, seguido de cualquier cosa". y Listo, tenemos nuestra wildcard, ahora solo tenemos que escoger el comando de acuerdo a nuestras necesidades.
+
+Como queremos "mostrar" archivos, el comando correspondería a **ls** pero aplicando la wildcard
+
+	ls [0-9]*
+	1.fasta
+	
+	ahora solo nos muestra los archivos de acuerdo a la wildcard.
+	también, si no recuerdas el nombre de un archivo pero tienes alguna idea, puedes usar las wildcard para encontrarlo
+	
+	ls t*
+	test.fasta
+	
+	también podemos duplicar un archivo con el comando cp
+	cp 1.fasta 2.fasta
+	
+	sintaxis: [copiar] [lo que quiero copiar] [nombre destino]
+	
+Recuerdas el comando **cat**? se usa para mostrar el contenido de un archivo en la terminal, y podemos usarlo también para combinar 2 archivos fasta y obtener nuestro primer multi-fasta.
+
+	cat 1.fasta 2.fasta	> 3.fasta
+	cat 3.fasta
+	>mi_secuencia
+	GCAAGCGGCTAGCTAGCTACTACCAGCGATCACGAGCATCGATCGATGCT
+	GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
+	GCGCGCGCGCGCGCGCGCGCGGGGGGGGGGGGGGGCCCCCCCCCCCCCCC
+	>mi_secuencia
+	GCAAGCGGCTAGCTAGCTACTACCAGCGATCACGAGCATCGATCGATGCT
+	GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
+	GCGCGCGCGCGCGCGCGCGCGGGGGGGGGGGGGGGCCCCCCCCCCCCCCC
+	
+Podemos usar las expresiones regulares con el comando **grep** para buscar algún patron en varios archivos a la vez:
+
+	grep -n "CGTAGCTATA" *.fasta
+	1.fasta:3:GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
+	2.fasta:3:GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
+	3.fasta:3:GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
+	3.fasta:7:GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
+	
+	esto nos muestra en cada archivo, en cada numero de línea el match que buscamos. 
+	Al buscar archivos con "*" estamos diciendo al comando grep que busque en todo lo que termine con .fasta
+	
+	
+
