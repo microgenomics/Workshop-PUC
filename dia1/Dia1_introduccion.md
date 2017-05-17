@@ -445,3 +445,24 @@ Y listo!, ya podemos enviar el reporte a nuestro jefe, por mientras, seguiremos 
 	
 	cd ..
 
+## R: ¿Qué es?
+R es un lenguaje de programación para cálculos estadísticos y gráficos  basado en el lenguaje S creado en los laboratorios Bell (Lucent Technologies). Muy popular en la ciencia debido a sus gráficos de alta calidad y versatilidad al momento de mostrar lo que se tiene en mente.
+
+## Instalación
+
+Para **MacOS**:
+
+	wget https://cloud.r-project.org/bin/macosx/R-3.4.0.pkg
+	luego doble-click y seguimos los pasos de la instalación.
+	
+Para **Linux**:
+
+	sudo apt-get update
+	sudo apt-get install r-base
+	sudo apt-get install r-base-dev
+	
+Bingo!, ya tenemos R instalado veamos que tal es, abramos una terminal y escribimos `R` y presionamos enter
+
+![](../images/Rconsole.png)
+
+La verdad es bastante poco amigable el código en si. ya tiene sus complicaciones manejar una shell como para manejar una shell dentro de otra shell. Es por esto que les presentamos **RStudio**
