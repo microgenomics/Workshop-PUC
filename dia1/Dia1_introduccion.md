@@ -349,6 +349,6 @@ en nuestro caso sería
 En este caso la sintaxis del ciclo **for** la acompañamos de una expresión regular donde apuntamos a "todo (`*`) lo que termine con `.fast` y además el último carácter debe terminar en `a` o `q`". El resultado de esta expresión regular es tomado por **ls** y luego por el ciclo **for**, agregandose a una variable (la misma variable se renueva con otro valor en cada "vuelta").
 
 ## Aplicando todo
-Primero descarga este pequeño set de secuencias [aquí](). Tenemos el siguiente caso: Han llegado secuencias NGS nuestro laboratorio, y nuestro jefe quiere rápidamente unas estadísticas iniciales, como el número secuencias, cuanto pesan los archivos, mostrar estos resultados en un archivo llamado reporte.txt
+Primero descarga este pequeño set de secuencias [aquí](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/problem1.zip). Tenemos el siguiente caso: Han llegado secuencias NGS nuestro laboratorio, y nuestro jefe quiere rápidamente unas estadísticas iniciales, como el número secuencias, cuanto pesan los archivos, mostrar estos resultados para cada muestra en un archivo llamado reporte.txt
 
 
