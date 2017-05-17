@@ -252,9 +252,9 @@ Recuerdas el comando **cat**? se usa para mostrar el contenido de un archivo en 
 	GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
 	GCGCGCGCGCGCGCGCGCGCGGGGGGGGGGGGGGGCCCCCCCCCCCCCCC
 	
-Podemos usar las expresiones regulares con el comando **grep** para buscar algún patron en varios archivos a la vez:
+Podemos usar las expresiones regulares con el comando **grep** para buscar algún patron (una caja TATA tal vez?), en varios archivos a la vez:
 
-	grep -n "CGTAGCTATA" *.fasta
+	grep -n "TATA" *.fasta
 	1.fasta:3:GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
 	2.fasta:3:GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
 	3.fasta:3:GTCGTCGAGTCGTAGCTATATTGCGAGCAGAAATATATATTATATATATA
@@ -264,4 +264,75 @@ Podemos usar las expresiones regulares con el comando **grep** para buscar algú
 	Al buscar archivos con "*" estamos diciendo al comando grep que busque en todo lo que termine con .fasta
 	
 	
+## Crea tu propio script
+Un script es un pequeño archivo con comandos que lee la terminal y las ejecuta en orden desde arriba hacia abajo. Es muy parecido a una receta de cocina. Es más, cocinemos un archivo fastq!
 
+fastq es un archivo de text que tiene un formato en particular similar al fasta (también guarda secuencias), con la diferencia que un fastq también guarda calidades de la secuencia y tiene el siguiente formato:
+
+	@SEQ_ID
+	GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
+	+
+	!''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65
+	
+* La primera linea es el header del fastq y siempre empieza con un @
+* La segunda linea es la secuencia, igual que un archivo fasta
+* la tercera linea es un "+" para (opcionalmente), poner descripciones de la secuencia
+* La ultima linea corresponde a las calidades de cada nucleótido, cada símbolo representa un número y por ende una calidad (usado por ejemplo cuando se manda a secuenciar un organismo, las secuencias llegan en este formato). Para ver que número equivale cada símbolo sigue [este enlace](http://ascii.cl)
+
+Aquí les presentamos un comando para editar (o crear), un archivo: **vi**.
+
+	vi miscript.sh
+	(.sh es solo una extensión genérica para indicar que adentro hay (o habrá), código shell (sh).
+
+Se nos abrirá una terminal con nada de contenido y en negro (o blanco, dependiendo de tu terminal), si el archivo miscript.bash existe, entonces se abrirá y podremos modificarlo, de lo contrario se creará.
+
+Para **insertar** texto debemos apretar la letra **i**, con ello todo lo que tecleemos estará en el archivo, y como hemos aprendido un par de comandos, haremos nuestra receta de cocina escribiendo:
+
+	echo "@mi_primer_fastq"
+	echo "ATGTTGCAACGATTGGTCGTTGCATTATGCCTGCTTGGGT"
+	echo "+"
+	echo "CCCCCCC65++)(%%%%).1!''*((((>>>>>()()()>"
+
+Para guardar, presionamos **Escape**, para salir del modo **insertar**, y escribimos "**:wq**" y presionamos Enter.
+ 
+* ":" es para indicar que queremos una acción especial de **vi**
+* w es para indicar a **vi** que guarde los cambios.
+* q es para indicar que saldremos del editor
+
+Todo esto debiera verse así:
+ ![](../images/vimiscript.png)
+ 
+ Y ahora ejecutamos nuestro script usando el comando **bash**: 
+ 
+ 	bash miscript.sh
+ 	@mi_primer_fastq
+	ATGTTGCAACGATTGGTCGTTGCATTATGCCTGCTTGGGT
+	+
+	CCCCCCC65++)(%%%%).1!''*((((>>>>>()()()>
+	
+	podemos redireccionar la salida de un script
+	bash miscript.sh > miprimer.fastq
+	
+Cuando se trabaja en bioinformática, es normal que los archivos fasta o fastq sean muy grandes, con muchas secuencias y que ocupen muchos Gigas de espacio. Por eso no es descabellado pensar que podemos reducir su tamaño (y no nos referimos a botar a la basura la mitad de las secuencias), nos referimos a **comprimir** y usaremos el comando **gzip**:
+
+	en nuestro tendríamos que escribir:
+	gzip 1.fasta
+	gzip 2.fasta
+	gzip 3.fasta
+	gzip test.fasta
+	gzip miprimer.fastq
+	
+Esto se volvería imposible de hacer si tenemos 1000 fastas, por eso es mejor usar un **ciclo for**. La estructura de un **for** es:
+
+	for mi_variable in $(comando)
+	do
+		comandos, scripts o recetas de cocina
+	done
+	
+en nuestro caso sería
+
+	for mi_archivo in $(ls *.fast[aq])
+	do
+		gzip $mi_archivo
+	done
+	
