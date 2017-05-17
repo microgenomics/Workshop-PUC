@@ -83,6 +83,18 @@ La siguiente tabla muestra algunos datos útiles sobre los archivos FASTQ que ac
 
 ---
 
+#### <img src="https://github.com/microgenomics/Workshop-PUC/blob/master/images/terminal.png?raw=true" alt="alt text" width="40" height="50"> Abre la Terminal
+
+En el tutorial, cuando veas el siguiente símbolo, significa que debes escribir en la terminal la línea de comando que aparezca en cada caso:
+
+	$
+
+Mientras que el siguiente símbolo indica un comentario útil para que entiendas la siguiente línea (no es necesario que lo escribas):
+
+	#
+
+---
+
 ### Pre-procesamiento de *reads*
 
 El pre-procesamiento de los *reads* de RAD-seq, obtenidos desde el proceso de secuenciación (*raw data*), consta de dos procesos principales. Primero, identificar los *reads* pertenecientes a cada individuo (*demultiplex*) y recuperarlos en archivos FASTQ independientes, para ello se utilizan los *barcodes* o *index*, que son secuencias pequeñas (5 nucleótidos) presentes en los partidores utilizados en la construcción de las librerías de secuenciación. Y segundo, realizar el control de calidad (QC: *quality control*), donde se descartan los *reads* de baja calidad.
@@ -115,6 +127,8 @@ Ahora, suponiendo que te encuentras en una carpeta en la cual tenemos las carpet
 	ATCAAA		wc_1218-07
 	ACATAC		wc_1221-02
 
+... descarga el archivo `barcode-sample_list` [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia3/barcode-sample_list.zip).
+
 Ahora evalúa y escribe la línea de commando correcta para tus datos, por ejemplo:
 
 Si tienes single-end reads...
@@ -131,7 +145,7 @@ Si tienes paired-end reads, pero tanto los reads R1 y R2 se encuentran en el mis
 
 O si llevaste acabo la técnica de ddRAD-seq (*double-digested restriction site-associated DNA*), en este caso, necesitas indicarle al programa ambas enzimas de restricción que utilizaste y dónde se encuentran los *barcodes* dentro de los archivos FASTQ R1 y R2...
 
-	Opciónes acerca del barcode/index:
+	# Opciónes acerca del barcode/index:
     --inline_null:   barcode se encuentra en la secuencia, sólo para single-end read (configuración por defecto).
     --index_null:    barcode se encuentra en el FASTQ header, sólo para single'end reads.
     --inline_inline: barcode se encuentra en la secuencia, para single y paired-end read.
@@ -197,7 +211,7 @@ Antes de correr el mapeo, debemos indexar el genoma para que Bowtie2 pueda usarl
 	
 Después de escribir la línea de comando y presionar `enter` el programa `bowtie2-build` comenzará a correr y verás algo como la siguiente imágen:
 
-![]( "")
+![bowtie2-build](https://github.com/microgenomics/Workshop-PUC/blob/master/images/run_bowtie2-build.png?raw=true "")
 
 	# Cuando bowtie2-build termine, como output deberías obtener varios archivos con extensión .bt2
 	$ ls
@@ -244,7 +258,55 @@ Como las muestras provienen de individuos diferentes, debemos realizar alineamie
 	# Excelente! como son 18 muestras, el archivo samples_list debiese tener 18 líneas
 	$ wc -l samples_list 
       18 samples_list
- 
+      
+2.- Revisa las opciónes disponibles en el programa `bowtie2` y define los parámetros a utilizar. Recuerda que puedes obtener ésta información escribiendo `$ bowtie2 -h` en la terminal o [aquí](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#command-line).
 
+	# Define tu línea de comando
+	bowtie2 -x reference -U sample01.fastq -S sample01.sam -q -N 1 --n-ceil --end-to-end --threads 6
+
+3.- Crea un archivo con extensión `.bash` usando el comando `vim` y escribe las instrucciónes del ciclo, usarémos `while`, así:
+
+	$ vi bowtie2.bash
+	# En la terminal se abrirá el archivo bowtie2.bash...
+	# Presiona la tecla i para poder editar y escribe:
+	
+	while read sample
+	do
+
+		bowtie2 -x ../reference/Gaculeatus_reference -U ../etapa_1/"$sample".fastq -S "$sample".sam -q -N 1 --n-ceil --end-to-end --threads 6
+	
+	done < samples_list
+	
+	# Presiona la tecla esc para salir del editor y escribe:
+	:wq
+	# Lo que te permite guardar y salir del archivo bowtie2.bash
+
+... algo así:
+
+![vi_bowtie2.bash](https://github.com/microgenomics/Workshop-PUC/blob/master/images/vi_bowtie2-bash.png?raw=true) 
+
+4.- Corre tu nuevo programa `bowtie2.bash`, de esta manera se realizará un alineamiento después del otro de forma automática, así:
+
+	$ bash bowtie2.bash
+
+... verás que `bowtie2` comienza a trabajar e irá reportando algúnas estadísticas acerca de cada alineamiento, como se ve en la siguiente imágen:
+
+![run_bowtie2](https://github.com/microgenomics/Workshop-PUC/blob/master/images/run_bowtie2.png?raw=true)
+
+Dependiendo las capacidades de tu computadora, a `bowtie2` le podría tomar de 30 minutos a 1 hora desarrollar los 18 alineamientos de los datos ejemplo. Una vez que termine, deberías ver los siguientes *outputs*:
+
+	$ ls
+	cr_1533-05.sam   cs_1335-54.sam   pcr_1211-11.sam
+	pl_1537-27.sam   sj_1879-31.sam   stl_1274-72.sam
+	cr_1533-17.sam   ms_2067-51.sam   pcr_1312-13.sam
+	rb_2240-128.sam  sj_1879-34.sam   wc_1218-07.sam
+	cs_1335-17.sam   ms_2067-66.sam   pl_1537-11.sam
+	rb_2240-158.sam  stl_1274-63.sam  wc_1221-02.sam
+
+SAM (*Sequence Alignment/Map*) es un formato de archivos que incluye toda la información acerca de un alineamiento de *reads* contra largas sequencias de referencia, puedes leer al respecto [aquí](https://samtools.github.io/hts-specs/SAMv1.pdf).
+
++ Puedes descargar los 18 archivos SAM [aquí]().
+
+Ahora que tienes los archivos SAM (alineamientos) de cada muestra, estás listo para seguir adelante con la *pipeline* y realizar los análisis de genética poblacional.
 
 #### *De Novo*
