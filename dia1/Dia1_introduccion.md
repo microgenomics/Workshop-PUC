@@ -1,5 +1,6 @@
 ![banner](../images/logocbibhorizontal.png)
-##Microbial Genomics Lab
+
+## Microbial Genomics Lab
 
 [Sandro Valenzuela-Diaz](https://github.com/Sanrrone) - [Katterinne Mendez](https://github.com/Katterinne) - [Eduardo Castro-Nallar](https://github.com/ecastron) 
 
