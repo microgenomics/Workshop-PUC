@@ -109,7 +109,7 @@ Espera pacientemente... y listo!... cierra la `Terminal`
 
 #### Instala Java
 
-Dirígete a la página de descarga de `java` [aquí](https://www.java.com/es/download/). Haz clic en la opción `Descarga gratuita de Java` y sigue las instrucciónes.
+Dirígete a la página de descarga de `java` [aquí](https://www.java.com/es/download/). Haz clic en la opción `Descarga gratuita de Java` y sigue las instrucciones.
 
 ![java](https://github.com/microgenomics/Workshop-PUC/blob/master/images/java.png?raw=true)
 
@@ -152,13 +152,13 @@ Puedes personalizar otras características visuales de tu `Terminal` en la opci�
 
 [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) es una herramienta con interfáz gráfica, capaz de calcular varias estadísticas y evaluar la calidad de las secuencias contenidas en los archivos FASTQ que se le entrega (*input*) (**_Quality Control_**).
 
-Para instalar `FastQC` dirígete a la página de descarga [aquí](https://www.bioinformatics.babraham.ac.uk/projects/download.html#fastqc) y selecciona el primer link disponible: `FastQC v0.11.5 (Mac DMG image)`, para descargar el archivo DMG. Después sigue las instrucciónes y listo!
+Para instalar `FastQC` dirígete a la página de descarga [aquí](https://www.bioinformatics.babraham.ac.uk/projects/download.html#fastqc) y selecciona el primer link disponible: `FastQC v0.11.5 (Mac DMG image)`, para descargar el archivo DMG. Después sigue las instrucciones y listo!
 
 #### Instala Prinseq-lite
 
 [PRINSEQ](http://prinseq.sourceforge.net) es un programa útil para realizar el control de calidad (**QC**) y pre-procesamiento de tu **_raw data_** (*reads* secuenciados).
 
-Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [**aquí**](https://github.com/microgenomics/Workshop-PUC/raw/master/dia1/prinseq-lite-0.20.4.tar). Mueve el archivo a una carpeta adecuada y sigue las instrucciónes a continuación:
+Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [**aquí**](https://github.com/microgenomics/Workshop-PUC/raw/master/dia1/prinseq-lite-0.20.4.tar). Mueve el archivo a una carpeta adecuada y sigue las instrucciones a continuación:
 
 	# Te recomiendo crear una carpeta llamada "programs" para guardar e instalar programas
 	$ cd
@@ -196,7 +196,7 @@ Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [*
 
 #### Instala Bowtie2
 
-[Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) es una herramienta útil y eficiente para alinear *reads* contra largas secuencias de referencia. Para instalar `bowtie2` sigue las siguientes instrucciónes:
+[Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) es una herramienta útil y eficiente para alinear *reads* contra largas secuencias de referencia. Para instalar `bowtie2` sigue las siguientes instrucciones:
 
 	$ brew install bowtie2
 	# Espera pacientemente...
@@ -236,7 +236,7 @@ Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [*
 
 #### Instala Prokka
 
-[Prokka](http://www.vicbioinformatics.com/software.prokka.shtml) es un software útil y eficiente para la anotación de genomas procariontes. Para instalar `prokka` sigue las siguientes instrucciónes:
+[Prokka](http://www.vicbioinformatics.com/software.prokka.shtml) es un software útil y eficiente para la anotación de genomas procariontes. Para instalar `prokka` sigue las siguientes instrucciones:
 
 	$ cpan install Bio::Perl		# espera pacientemente... atento, la Terminal pedirá tu contraseña...
 	$ cpan install XML::Simple		# espera pacientemente...
@@ -252,7 +252,7 @@ Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [*
 
 #### Instala Stacks
 
-[Stacks](http://catchenlab.life.illinois.edu/stacks/) es una pipeline para procesar reads obtenidos mediante técnicas de representación reducida del genoma como RAD-seq (*Restriction-site Associated DNA sequencing*). Para instalar `Stacks` sigue las siguientes instrucciónes:
+[Stacks](http://catchenlab.life.illinois.edu/stacks/) es una pipeline para procesar reads obtenidos mediante técnicas de representación reducida del genoma como RAD-seq (*Restriction-site Associated DNA sequencing*). Para instalar `Stacks` sigue las siguientes instrucciones:
 
 	$ brew install stacks		# espera pacientemente...
 	$ cpan install Bundle::DBI
@@ -261,7 +261,7 @@ Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [*
 
 [MySQL](https://dev.mysql.com) es un motor de base de datos de libre acceso. Para instalar `MySQL` descarga el archivo DMG de MySQL desde la [página](https://dev.mysql.com/downloads/mysql/) o **[aquí](https://dl.dropboxusercontent.com/u/73361402/mysql-5.7.18-macos10.12-x86_64.dmg.zip)**.
 
-Haz doble clic en el archivo DMG y sigue las instrucciónes, pon atención en el mensaje que aparecerá durante la instalación de MySQL, como el que se muestra en la siguiente imágen, y toma nota de la contraseña que aparece, la necesitarás mas adelante.
+Haz doble clic en el archivo DMG y sigue las instrucciones, pon atención en el mensaje que aparecerá durante la instalación de MySQL, como el que se muestra en la siguiente imágen, y toma nota de la contraseña que aparece, la necesitarás mas adelante.
 
 ![mysql_installer](https://github.com/microgenomics/Workshop-PUC/blob/master/images/mysql_installer.png?raw=true)
 
