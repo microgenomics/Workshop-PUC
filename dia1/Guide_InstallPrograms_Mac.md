@@ -20,11 +20,11 @@ Esta guía está orientada a la instalación de requisitos necesarios para compl
 
 Primero debes revisar si `Xcode` está o no instalado en tu computadora. Abre `Spotlight Search` haciendo clic en el ícono de la lupa en la parte superior derecha de tu pantalla o usa el acceso rápido del teclado, presiona `command`->`space`. Escribe "xcode", si aparece (como se ve en la imágen) lo tienes, de lo contrario debes instalarlo.
 
-![Xcode_check]()
+![Xcode_check](https://github.com/microgenomics/Workshop-PUC/blob/master/images/Xcode_check.png?raw=true)
 
 Para instalar Xcode en tu computadora Mac, dirígete a `Applications` y abre `App Store`, en el buscador escribe `Xcode` -> descarga e instala la aplicación.
 
-![Xcode_AppStore]()
+![Xcode_AppStore](https://github.com/microgenomics/Workshop-PUC/blob/master/images/Xcode_AppStore.png?raw=true)
 
 ---
 
@@ -111,7 +111,7 @@ Espera pacientemente... y listo!... cierra la `Terminal`
 
 Dirígete a la página de descarga de `java` [aquí](https://www.java.com/es/download/). Haz clic en la opción `Descarga gratuita de Java` y sigue las instrucciónes.
 
-![java]()
+![java](https://github.com/microgenomics/Workshop-PUC/blob/master/images/java.png?raw=true)
 
 ---
 
@@ -119,7 +119,7 @@ Dirígete a la página de descarga de `java` [aquí](https://www.java.com/es/dow
 
 En las computadoras Mac, por defecto la `Terminal` se ve en blanco y negro, así:
 
-![terminal_nocolor]()
+![terminal_nocolor](https://github.com/microgenomics/Workshop-PUC/blob/master/images/terminal_nocolor.png?raw=true)
 
 El hecho de tener colores en la `Terminal` no se trata de estética solamente, sino que te permite diferenciar distintos tipos de archivos. ¿Quieres colores en tu `Terminal`?... sigue los pasos a continuación:
 
@@ -140,7 +140,7 @@ El hecho de tener colores en la `Terminal` no se trata de estética solamente, s
 
 Listo!... cierra la `Terminal` y luego abre la `Terminal` nuevamente.
 
-![terminal_color]()
+![terminal_color](https://github.com/microgenomics/Workshop-PUC/blob/master/images/terminal_color.png?raw=true)
 
 Puedes personalizar otras características visuales de tu `Terminal` en la opción `Preferences...` de la barra de herramientas de la `Terminal` en la parte superior de tu pantalla.
 
@@ -158,7 +158,7 @@ Para instalar `FastQC` dirígete a la página de descarga [aquí](https://www.bi
 
 [PRINSEQ](http://prinseq.sourceforge.net) es un programa útil para realizar el control de calidad (**QC**) y pre-procesamiento de tu **_raw data_** (*reads* secuenciados).
 
-Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [**aquí**](). Mueve el archivo a una carpeta adecuada y sigue las instrucciónes a continuación:
+Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [**aquí**](https://github.com/microgenomics/Workshop-PUC/raw/master/dia1/prinseq-lite-0.20.4.tar). Mueve el archivo a una carpeta adecuada y sigue las instrucciónes a continuación:
 
 	# Te recomiendo crear una carpeta llamada "programs" para guardar e instalar programas
 	$ cd
@@ -246,9 +246,9 @@ Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [*
 
 #### Instala Artemis
 
-[Artemis](http://www.sanger.ac.uk/science/tools/artemis) es una herramienta con interfáz gráfica visualizar y analizar secuencias. Para instalar `Artemis` descargar el archivo DMG **[aquí]()**. Doble clic en el archivo `.dmg` y arrastra los íconos de `Artemis`, `ACT` y `DNAPlotter` hasta la carpeta `Applications`. Listo!
+[Artemis](http://www.sanger.ac.uk/science/tools/artemis) es una herramienta con interfáz gráfica visualizar y analizar secuencias. Para instalar `Artemis` descargar el archivo DMG **[aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia1/artemis_act_dev.dmg.zip)**. Doble clic en el archivo `.dmg` y arrastra los íconos de `Artemis`, `ACT` y `DNAPlotter` hasta la carpeta `Applications`. Listo!
 
-![Artemis_app]()
+![Artemis_app](https://github.com/microgenomics/Workshop-PUC/blob/master/images/Artemis_app.png?raw=true)
 
 #### Instala Stacks
 
@@ -259,7 +259,7 @@ Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [*
 
 #### Instalar MySQL
 
-[MySQL](https://dev.mysql.com) es un motor de base de datos de libre acceso. Para instalar `MySQL` descarga el archivo DMG de MySQL desde la [página](https://dev.mysql.com/downloads/mysql/) o [aquí]().
+[MySQL](https://dev.mysql.com) es un motor de base de datos de libre acceso. Para instalar `MySQL` descarga el archivo DMG de MySQL desde la [página](https://dev.mysql.com/downloads/mysql/) o **[aquí](https://dl.dropboxusercontent.com/u/73361402/mysql-5.7.18-macos10.12-x86_64.dmg.zip)**.
 
 Haz doble clic en el archivo DMG y sigue las instrucciónes, pon atención en el mensaje que aparecerá durante la instalación de MySQL, como el que se muestra en la siguiente imágen, y toma nota de la contraseña que aparece, la necesitarás mas adelante.
 
