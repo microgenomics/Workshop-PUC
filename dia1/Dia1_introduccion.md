@@ -83,7 +83,9 @@ También en nuestra terminal podemos movernos entre esas carpetas y listar su co
 	
 	y para entrar a una carpeta, solo le damos el nombre de la carpeta (o ruta), al comando cd
 	cd Workshop-PUC/dia1
-	
+
+Puedes encontrar una lista detallada de los comandos básicos mas usados en la terminal [aquí](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/GuiaComandosBasicosTerminal.md)
+
 ## Manejo de archivos de texto
 
 Un archivo de texto se define como un archivo que contiene caracteres sin algún patron en específico, existen varias formas de crear un archivo una de ellas es **redireccionando la salida de los comandos**, esto parece ser complejo pero no lo es tanto. Recuerdan nuestras variables: variable1, variable2, variable3 y variable4.
@@ -349,7 +351,7 @@ en nuestro caso sería
 En este caso la sintaxis del ciclo **for** la acompañamos de una expresión regular donde apuntamos a "todo (`*`) lo que termine con `.fast` y además el último carácter debe terminar en `a` o `q`". El resultado de esta expresión regular es tomado por **ls** y luego por el ciclo **for**, agregandose a una variable (la misma variable se renueva con otro valor en cada "vuelta").
 
 ## Aplicando todo
-Primero descarga y descomprime este pequeño set de secuencias [aquí](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/problem1.zip). Tenemos el siguiente caso: Han llegado secuencias NGS a nuestro laboratorio en formato fastq, y nuestro jefe quiere rápidamente unas estadísticas iniciales, como el número de secuencias, cuanto pesan los archivos y mostrar estos resultados para cada muestra en un archivo llamado reporte.txt.
+Primero descarga y descomprime este pequeño set de secuencias [aquí](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/problem1.zip). Tenemos el siguiente caso: Han llegado secuencias de personas enfermas con asma  y personas sanas, el ADN fue secuenciado con tecnología Next-Gen y en formato fastq, y nuestro jefe quiere rápidamente unas estadísticas iniciales, como el número de secuencias, cuanto pesan los archivos y mostrar estos resultados para cada muestra en un archivo llamado reporte.txt.
 
 Primero entramos en la carpeta descomprimida
 
@@ -445,6 +447,7 @@ Y listo!, ya podemos enviar el reporte a nuestro jefe, por mientras, seguiremos 
 	
 	cd ..
 
+
 ## R: ¿Qué es?
 R es un lenguaje de programación para cálculos estadísticos y gráficos  basado en el lenguaje S creado en los laboratorios Bell (Lucent Technologies). Muy popular en la ciencia debido a sus gráficos de alta calidad y versatilidad al momento de mostrar lo que se tiene en mente.
 
@@ -452,8 +455,7 @@ R es un lenguaje de programación para cálculos estadísticos y gráficos  basa
 
 Para **MacOS**:
 
-	wget https://cloud.r-project.org/bin/macosx/R-3.4.0.pkg
-	luego doble-click y seguimos los pasos de la instalación.
+descarga el archivo de instalación [aquí](https://cloud.r-project.org/bin/macosx/R-3.4.0.pkg), luego haz doble-click en el archivo y sigue los pasos de la instalación.
 	
 Para **Linux**:
 
@@ -461,8 +463,224 @@ Para **Linux**:
 	sudo apt-get install r-base
 	sudo apt-get install r-base-dev
 	
-Bingo!, ya tenemos R instalado veamos que tal es, abramos una terminal y escribimos `R` y presionamos enter
+Bingo!, ya tenemos R instalado veamos que tal es, abramos una terminal, escribimos `R` y presionamos enter
 
 ![](../images/Rconsole.png)
 
 La verdad es bastante poco amigable el código en si. ya tiene sus complicaciones manejar una shell como para manejar una shell dentro de otra shell. Es por esto que les presentamos **RStudio**
+
+para **MacOS**:
+
+Descarga el archivo de instalación [aquí](https://download1.rstudio.org/RStudio-1.0.143.dmg), después haz doble click en el archivo descargado arrastra el icono de RStudio a la carpeta Aplicaciones que sale al lado.
+
+para **Linux (Ubuntu/Bioubuntu/Debian)**:
+
+Descarga el archivo de instalación [aquí](https://download1.rstudio.org/rstudio-1.0.143-amd64.deb), luego haz doble click en el archivo descargado y sigue las instrucciones de instalación.
+
+Luego abrimos RStudio y listo!, una interfaz gráfica mucho mas amigable que una terminal.
+![](../images/rstudio_amigable.png)
+
+## Las 4 zonas
+
+* **Editor de texto**: en esta zona es donde ocurre la magia, donde pondremos el código e iremos preparando nuestros scripts. Podemos ejecutar nuestro código aprentando el botón `Run`, o ejecutando la linea que queremos ejecutar con ctrl (o command en el caso de mac) + enter
+* **Consola**: las acciones que escribimos en el editor de texto se ejecutan en esta ventana, aquí aparecen los resultados excepto los gráficos. También puedes escribir el código directamente aquí.
+* **Historial y ambiente**: en esta ventana las variables que creemos serán guardadas y mostradas aquí, ademas de estar disponibles en caso que hagamos mas de un script.
+* **Archivos, gráficos, paquetes, ayuda y visualizador (AGPAV)**: esta ventana se divide a su vez en otras 5 pestañas que son de mucha utilidad:
+	* **Files**: aquí se muestran los archivos de nuestro `work directory`, generalmente el `HOME`
+	* **Plots**: en esta ventana se muestran nuestros gráficos.
+	* **Packages**: muestra una lista con los paquetes, instalados además de poder instalar otros.
+	* **Help**: es una ventana de ayuda cuando queremos obtener información de alguna librería en especial o una función desconocida.
+	* **Viewer**: Es solo un panel de visualización para casos (por ejemplo), de conexiones remotas, no lo tomaremos en cuenta.
+
+## Paquetes
+Un paquete en R, es una colección de funciones agrupados y que cumplen con un formato específico. Cada vez que instalamos R, un número finito de funciones viene con ello, suficientes para otorgar estabilidad al entorno.
+
+Si apretamos en la pestaña Packages en la ventana de AGPAV, obtendremos una lista de los paquetes instalados y de aquellos que están "activados"
+![](../images/packages.png)
+También existe una gran librería donde podemos descargar mas paquetes de acuerdo a nuestras necesidades. Por ejemplo, uno de los paquetes mas usados es **ggplot2**, un paquete usado para graficar todo tipo de datos en distintos tipos de formatos. Para instalarlo presionamos el botón `Install` que esta en la pestaña Packages de la ventana AGPAV.
+
+<img src="../images/installggplot2.png" alt="alt text" width="400">
+
+seleccionamos **ggplot2** y presionamos install, esperamos un poco y listo!. De esta forma se instalan los paquetes de R.
+
+Aprovechemos e instalemos un paquete usaremos mas adelante, se trata del paquete ape, usado para análisis filogenéticos y que contiene funciones de lectura de archivos fasta. Así que otra vez para instalarlo presionamos el botón `Install` que esta en la pestaña Packages de la ventana AGPAV.
+
+<img src="../images/ape.png" alt="alt text" width="400">
+
+En estos casos existe una gran biblioteca de paquetes (librería), donde se alojan para ser descargados, esta librería se llama CRAN. 
+
+Existe otra librería llamada `Bioconductor` (www.bioconductor.org) el cual es una serie de paquetes de R que han sido especialmente desarrollados para bioinformática. Aunque no existe una interfaz gráfica para instalar paquetes como CRAN, `bioconductor` ofrece 2 simples lineas de código para instalar cualquier paquete de esta librería. Por ejemplo, instalemos el paquete `phyloseq`
+
+	source("https://bioconductor.org/biocLite.R")
+	biocLite("phyloseq")
+
+
+## Operaciones básicas
+R tiene la capacidad de interpretar de forma mas intuitiva que una shell, por ejemplo, escribamos en la consola:
+	
+	x<-1
+	
+esto significa que el `x` tomara el valor `<-` de `1`. Esto por si solo no nos devolverá valor alguno. Si escribimos
+	
+	x
+	[1] 1
+ahora el sistema devuelve el valor de `1`, esto es por que solo estamos asignando un valor y no estamos pidiendo a R que muestre valor, para eso es la segunda linea. No nos preocupemos por el 1 encerrado en corchetes `[1]` solo es el numero de lineas de nuestro output.
+
+R puede funcionar como una calculadora.
+	
+	x + 1
+	[1] 2
+	x - 1
+	[1] 0
+	x<- x + 1
+	x
+	[1] 2
+	x<-x*x
+	[1] 4
+	log(10)
+	[1] 2.302585
+
+Una de las utilidades básicas mas usadas en R es la lectura de archivos (tablas como tsv o csv). Por ejemplo, descarga y descomprime [este archivo](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/taxcount.csv.zip). Es un archivo CSV que contiene información acerca de bacterias en personas con asma y personas sanas y la abundancia en que estas bacterias se encuentran.
+
+antes de leer el archivo con R, primero debes establecer nuestro directorio de trabajo, esto se hace con la función **setwd()**:
+
+	y estableceremos la ruta en nuestra carpeta actual dia1
+	/Users/castrolab04/Desktop/Workshop-PUC/dia1 (esta ruta cambia de PC en PC, debes encontrar tu propia ruta)
+	si no sabes como obtener la ruta completa, recuerda que existe el comando pwd que puedes usar en una terminal y copiar desde allí la ruta completa.
+	setwd("/Users/castrolab04/Desktop/Workshop-PUC/dia1")
+	
+listo!, ahora que establecimos nuestro working directory, ya podemos leer nuestro archivo taxcount.csv, para eso usaremos la función **read.csv** de R.
+
+	df<-read.csv(file.choose(),header = TRUE)
+	
+* df es la variable donde guardaremos nuestro CSV
+* read.csv() es la función para leer el CSV
+* cada función necesita parámetros (inputs) para trabajar, en este caso son file.choose() (el nombre de una función que nos dejará escoger un archivo y seleccionamos taxcount.csv), y header=TRUE que significa que nuestra tabla taxcount.csv tiene encabezados dentro aparte de los datos.
+
+ahora la nuestra tabla esta guardada en la variable `df`, y tiene mas de 1000 filas con información, por eso, para no mostrar todas líneas usaremos la función **head()**
+
+**Nota: escribimos las funciones con () porque se da a entender que reciben datos para funcionar**
+
+	head(df)
+	 Kingdom         Phylum          Class             Order             Family           Genus                        Species                           Name SRR1528344 SRR1528346 SRR1528348 SRR1528420 SRR1528426 SRR1528430 SRR1528434 SRR1528456 SRR1528458 SRR1528460 SRR1528462 SRR1528464 SRR1528466 SRR1528468
+	1 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium       Corynebacterium accolens       Corynebacterium accolens         12         23          3          9        205        592       2234          3       9973        422          1        154         14       3110
+	2 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium    Corynebacterium afermentans    Corynebacterium afermentans          1          0          0          1          7          7         12          7          1          0          0          0          0          2
+	3 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium   Corynebacterium ammoniagenes   Corynebacterium ammoniagenes          0          0          0          0          2          0          0          0          0          0          0          0          0          2
+	4 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium     Corynebacterium amycolatum     Corynebacterium amycolatum          0          0          0          0          1          0          0          1          6          0          0          0          0          0
+	5 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium Corynebacterium argentoratense Corynebacterium argentoratense          0          0          0          0          0          0          0          0          0          0          0          0          0          0
+	6 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium    Corynebacterium aurimucosum    Corynebacterium aurimucosum          0          0          0          0          0          0          0         38          1          0          0          0          0          0
+
+También podemos hacerlo manualmente especificando el nombre del archivo:
+
+		df<-read.csv("taxcount.csv",header = TRUE)
+		y es exactamente lo mismo
+		
+Exploremos un poco nuestros datos, para ver la cantidad de filas que tiene nuestro archivo usamos la función **nrow()** y para el numero de columnas **ncol()**
+
+	nrow(df)
+	[1] 1414
+	ncol(df)
+	[1] 21
+
+Para obtener las últimas líneas de nuestros datos, ocupamos la función **tail()**
+
+	tail(df)
+	     Kingdom Phylum  Class  Order Family  Genus                    Species SRR1528344 SRR1528346 SRR1528348 SRR1528420 SRR1528426 SRR1528430 SRR1528434 SRR1528456 SRR1528458 SRR1528460 SRR1528462 SRR1528464 SRR1528466 SRR1528468
+	1409  unknow unknow unknow unknow unknow unknow            naegleriophila           0          0          1          0          0          0          0          0          0          0          0          0          0          0
+	1410  unknow unknow unknow unknow unknow unknow    Paraburkholderia kirkii          0          0          0          0          1          0          1          0          0          0          0          0          0          0
+	1411  unknow unknow unknow unknow unknow unknow  Paracaedibacter symbiosus          0          0          0          0          0          0          0          0          0          0          0          0          0          0
+	1412  unknow unknow unknow unknow unknow unknow        Solibacter usitatus          0          0          0          0          0          0          0          0          0          0          0          1          0          0
+	1413  unknow unknow unknow unknow unknow unknow witches'-broom phytoplasma          0          0          0          0          0          0          0          0          0          0          0          0          0          0
+	1414  unknow unknow unknow unknow unknow unknow        yellows phytoplasma          0          1          0          0          0          0          0          0          0          0          0          0          0          0
+	
+Para obtener el nombre de las columnas de nuestra tabla usamos la función **names()**
+
+	names(df)
+	[1] "Kingdom"    "Phylum"     "Class"      "Order"      "Family"     "Genus"      "Species"    "SRR1528344" "SRR1528346" "SRR1528348" "SRR1528420" "SRR1528426" "SRR1528430" "SRR1528434" "SRR1528456" "SRR1528458" "SRR1528460" "SRR1528462" "SRR1528464" "SRR1528466" "SRR1528468"
+	
+Una tabla a fin de cuentas es una matriz de AxB, y por tanto tiene coordenadas A e B, (o XY), de esta forma podemos acceder a algún dato en específico a nuestra tabla, la sintaxis es [FILA,COLUMNA], si llenamos con solo un valor, entonces se mostraran todos los valores del valor que no pusimos:
+
+	df[2,]
+	2 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium    Corynebacterium afermentans    Corynebacterium afermentans          1          0          0          1          7          7         12          7          1          0          0          0          0          2
+	
+La forma `[2,]` significa acceder a la fila 2 y todas las columnas. si dejamos vacío el lado izquierdo, y seleccionamos la columna 2, entonces mostraremos todas las filas de la columna 2 (no lo escribiremos en honor al espacio del tutorial, pero tu puedes hacerlo en tu RStudio.
+
+Existen trucos bastante útiles cuando se quiere consultar las tablas, por ejemplo, ¿cuáles son las filas que tienen valores mayores a 1?. Intuitivamente uno tendería a escribir `df > 1` y en cierta medida funciona, pero existen columnas en nuestra tabla que no son numéricas,   por eso debemos limitar que columnas son las que serán sometida a dicha comparación, y sabemos que son desde la `8` a la `21` y lo rellenamos en la sección de columnas (lado derecho de la coma)
+
+	rowSums(df[,8:21])>1
+  
+Esto retornará un montón de valores booleanos (TRUE y FALSE), con las posiciones de las filas que cumplen con nuestra condición. Este resultado podemos usarlo como índice para obtener los valores reales de la tabla y no solo los booleanos.
+  
+  	index <- rowSums(df[,8:21])>1
+  	head(df[index,])
+  	    Kingdom         Phylum          Class             Order             Family           Genus                              Species SRR1528344 SRR1528346 SRR1528348 SRR1528420 SRR1528426 SRR1528430 SRR1528434 SRR1528456 SRR1528458 SRR1528460 SRR1528462 SRR1528464 SRR1528466 SRR1528468
+	1  Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium             Corynebacterium accolens         12         23          3          9        205        592       2234          3       9973        422          1        154         14       3110
+	22 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium Corynebacterium pseudodiphtheriticum          5       1391       5450        561         41        757        463        571        581         70          0         39         51      26161
+	23 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae Corynebacterium     Corynebacterium pseudogenitalium          3          7          1         13         51         19          2         12          9         26         68         27          8          7
+	39 Bacteria Actinobacteria Actinobacteria Corynebacteriales Corynebacteriaceae       Turicella                   Turicella otitidis          2          1          1          0          1          0          0          0          0          0          0          0          0          0
+	41 Bacteria Actinobacteria Actinobacteria Corynebacteriales        Dietziaceae         Dietzia                     Dietzia cinnamea          2          0          0          0          3          0          1          3          0          0          0          0          0          0
+	60 Bacteria Actinobacteria Actinobacteria Corynebacteriales   Mycobacteriaceae   Mycobacterium               Mycobacterium gordonae          2          1          0          0          0          0          1          0          0          0          0          0          0          0
+	
+Encerramos el resultado en la función **head()** solo para mostrarte que ya no son correlativas las filas.
+
+
+## Graficando la enfermedad
+Graficar puede ser un dolor de cabeza muy prolongado en cualquier lenguaje de programación, es por esto que muchas funciones en R se han dedicado en lo posible a facilitar el trabajo del usuario para expresar lo que quiere al momento de generar gráficos.
+
+¿Recuerdan la procedencia de la tabla anterior?, son de personas con asma y sanas. El objetivo es encontrar alguna relación de la enfermedad con el microbioma del/los individuos y graficar (en lo posible), esta relación con la ayuda del paquete `phyloseq`. Para esto primero descargaremos y descomprimiremos [esta tabla](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/metadata.csv.zip), la cual contiene la información fundamental acerca de que personas son las enfermas y las sanas.
+	
+Imaginen que phyloseq es un mueble con 3 cajonsitos, cada cajonsito tiene algo que guardar, en este caso phyloseq guarda 1) las taxonomías (tax_table) 2) las abundancias (otu_table) y 3)información de las personas (sample_data).
+
+Por lo tanto construyamos la información para el primer cajon, las taxonomías:
+
+	sabemos que el linaje esta en las primeras 7 columnas, por lo que extraeremos esas columnas.
+	matriz<-as.matrix(df[,1:7])
+	convocamos a la función as.matrix() para transformar nuestra tabla a un formato mas genérico que pueda leer el primer cajon de phyloseq
+	finalmente transformamos nuestra variable matriz en formato tax_table de phyloseq
+	tax<-tax_table(matriz)
+	
+Lo siguiente es formar el segundo formato phyloseq (otu_table), este formato esta compuesto solo por las abundancias de las bacterias, sabemos que estos valores se encuentran desde la columna 8 hasta la 21, por lo tanto extraeremos esos valores:
+	
+	al igual que en el ejemplo anterior, extraemos las columnas y las transformamos en un formato genérico leíble por las función otu_table
+	matriz<-as.matrix(df[,8:21])
+	y transformamos la tabla en el formato otu_table
+	otu<-otu_table(matriz,taxa_are_rows = T)
+	
+Por último leemos el archivo con la información acerca de que personas están sanas o enfermas, de igual forma como leímos la tabla anterior:
+	
+	metad<-read.csv("metadata.csv",header = TRUE,row.names = 1)
+	puedes usar file.choose() en vez de "metadata.csv" si tienes problemas para encontrar el archivo
+	Ahora convertimos el archivo en formato sample_data
+	metad<-sample_data(metad)
+	simple no?
+	
+Finalmente ponemos los 3 cajones en su mueble correspondiente con la función **phyloseq()**
+
+	phyob<-phyloseq(otu, tax,metad)
+
+Listo!, ya tenemos nuestro objeto phyloseq, a graficar. Primero veamos que tal es la abundancia en cuanto al filo de las bacterias, esto lo haremos mediante la función **plot_bar()** y daremos como parámetro nuestro objeto (cajon) `phyob` creado anteriormente.
+
+	plot_bar(phyob, fill = "Phylum")
+	
+Donde phyob es nuestro objeto phyloseq, y fill="Phylum" es una instrucción para la función plot_bar para que agrupe los datos por filo.
+	
+![](../images/plotbar.png)
+
+Nada mal no?, pero aun es pronto para establecer alguna relación entre la enfermedad y el microbioma, veamos que mas podemos hacer para elucidar esto.
+
+Podemos graficar las abundancias separadas por condición, para esto escribimos:
+
+	plot_bar(phyob, "Phylum",fill = "Phylum", facet_grid =~host_disease)
+	
+![](../images/phyloseqbar2.png)
+
+con esto ya podemos hacernos una idea quizás acerca de las proteobacterias que están mas presentes en las personas con asma. Pero aun es difícil concluir con certeza alguna relación. Necesitamos otro gráfico! jejeje. Esta vez uno llamado de co-ocurrencia, donde se podrá ver que relación establecen los organismos.
+
+	ig<-make_network(phyob, distance="jaccard", type = "taxa")
+	plot_network(ig, phyob, type = "taxa", color = "Phylum")
+
+![](../images/coocu.png)
+Al parecer las proteobacterias si influyen mucho en esta enfermedad. pero bueno, lamento decirte que son archivos de prueba con pacientes no reales. habría sido genial que esto fuera verdad.
+
+Recuerda que las funciones tienen manuales, solo debes anteponer un `?` en la función que quieras obtener más información.
+
