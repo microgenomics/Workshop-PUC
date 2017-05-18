@@ -519,6 +519,8 @@ Existe otra librería llamada `Bioconductor` (www.bioconductor.org) el cual es u
 
 	source("https://bioconductor.org/biocLite.R")
 	biocLite("phyloseq")
+	library(phyloseq)
+	library(ggplot2)
 
 
 ## Operaciones básicas
@@ -693,7 +695,7 @@ Recuerda que las funciones tienen manuales, solo debes anteponer un `?` en la fu
 Ya que estamos familiarizado con los códigos y el mano de consolas (shell y R), estamos en condiciones de instalar programas fundamentales para el análisis de cualquier proyecto que tenga bioinformática como los que usaremos el día 2 y 3.
 
 ## Instalación de Requisitos
-Existen 2 guías de instalación, una para los usuarios de **MacOS** y otra para usurarios de **Linus**.
+Existen 2 guías de instalación, una para los usuarios de **MacOS** y otra para usurarios de **Linux**.
 
 Para los usuarios de Mac pinchen [este enlace](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/Guide_InstallPrograms_Linux.md)
 
