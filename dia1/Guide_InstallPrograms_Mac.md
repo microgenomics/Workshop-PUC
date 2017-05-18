@@ -186,7 +186,7 @@ Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [*
 	# Presiona la tecla 'i' para poder editar
 	# Baja con usando las teclas 'flechas' al final del archivo presiona la tecla 'enter' y escribe:
 	
-	export PATH="$PATH:/Users/katterinne/Programs/SPAdes-3.10.1-Darwin/bin"
+	export PATH="$PATH:/path/to/programs/SPAdes-3.10.1-Darwin/bin"
 	
 	# Presiona la tecla 'enter' y luego la tecla 'esc' para salir del editor y escribe:
 	$ :wq
@@ -242,4 +242,84 @@ Para instalar `Prinseq-lite` descarga el archivo `prinseq-lite-0.20.4.tar.gz` [*
 	$ cpan install XML::Simple		# espera pacientemente...
 	$ brew install prokka --HEAD
 	# Espera pacientemente...
+	$ prokka -h		# Listo!
+
+#### Instala Artemis
+
+[Artemis](http://www.sanger.ac.uk/science/tools/artemis) es una herramienta con interfáz gráfica visualizar y analizar secuencias. Para instalar `Artemis` descargar el archivo DMG **[aquí]()**. Doble clic en el archivo `.dmg` y arrastra los íconos de `Artemis`, `ACT` y `DNAPlotter` hasta la carpeta `Applications`. Listo!
+
+![Artemis_app]()
+
+#### Instala Stacks
+
+[Stacks](http://catchenlab.life.illinois.edu/stacks/) es una pipeline para procesar reads obtenidos mediante técnicas de representación reducida del genoma como RAD-seq (*Restriction-site Associated DNA sequencing*). Para instalar `Stacks` sigue las siguientes instrucciónes:
+
+	$ brew install stacks		# espera pacientemente...
+	$ cpan install Bundle::DBI
+
+#### Instalar MySQL
+
+[MySQL](https://dev.mysql.com) es un motor de base de datos de libre acceso. Para instalar `MySQL` descarga el archivo DMG de MySQL desde la [página](https://dev.mysql.com/downloads/mysql/) o [aquí]().
+
+Haz doble clic en el archivo DMG y sigue las instrucciónes, pon atención en el mensaje que aparecerá durante la instalación de MySQL, como el que se muestra en la siguiente imágen, y toma nota de la contraseña que aparece, la necesitarás mas adelante.
+
+![mysql_installer](https://github.com/microgenomics/Workshop-PUC/blob/master/images/mysql_installer.png?raw=true)
+
+Ahora dirígete a `System Preferences` -> `MySQL` y haz clic en `Start MySQL Server`, deberías ver algo así:
+
+![mysql_start](https://github.com/microgenomics/Workshop-PUC/blob/master/images/mysql.png?raw=true)
+
+Ahora abre la terminal y escribe...
+
+	$ mysql -u root -p
+	# Aparecerá un mensaje pidiendo una contraseña, la misma que el instalador de MySQL te dió en el paso anterior.
+	$ Enter password: XoryZ!lea3/y
+	# Verás algo así...
 	
+	Welcome to the MySQL monitor.  Commands end with ; or \g.
+	Your MySQL connection id is 194
+	Server version: 5.7.18 MySQL Community Server (GPL)
+	
+	Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.
+	
+	Oracle is a registered trademark of Oracle Corporation and/or its
+	affiliates. Other names may be trademarks of their respective owners.
+
+	Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+	
+	mysql> 
+	
+	# La contraseña que nos entrego el instalador de MySQL es temporal, por lo que debemos cambiarla...
+	# Aún en mysql escribe la siguiente línea de comando para cambiar la contraseña por cualquier otra de tu elección...
+	$ mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyPassword';
+	# Asegúrate de reemplazar MyPassword por tu nueva contraseña
+	# Para salir de mysql escribe:
+	$ quit;
+	
+	# Puedes volver a entrar a mysql, esta vez, escribiendo tu nueva contraseña, para asegurar que el cambio fue exitoso!
+	# Siempre que quieras entrar a mysql escribe:
+	$ mysql -u root -p
+	# Y luego escribes tu contraseña (asegurate de no olvidarla!)
+	# Para salir de mysql escribe:
+	$ mysql> quit;
+
+Excelente! `MySQL` está disponible en tu computadora. Sólo nos hace falta modificar un archivo de configuración, para que `Stacks` pueda acceder a `mysql`:
+
+	$ cd /usr/local/Cellar/stacks/1.46/share/stacks/sql/
+	$ mv mysql.cnf.dist mysql.cnf
+	$ vi mysql.cnf
+	# Se abrirá el archivo mysql, presiona la tecla i para poder editar, verás algo así...
+	
+	[client]
+	user=root
+	password=XoryZ!lea3/y
+	host=localhost
+	port=3306
+	local-infile=1
+	
+	# En 'password=' cambia la antigua contraseña por la nueva contraseña
+	$ cd
+
+Listo!
+
+
