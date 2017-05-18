@@ -1,4 +1,10 @@
 ![banner](../images/logocbibhorizontal.png)
+##Microbial Genomics Lab
+
+[Sandro Valenzuela-Diaz](https://github.com/Sanrrone) - [Katterinne Mendez](https://github.com/Katterinne) - [Eduardo Castro-Nallar](https://github.com/ecastron) 
+
+---
+
 # Introducción a la Terminal y R.
 --------
 Hola!, bienvenidos al primer práctico de uso de terminal y R, aquí aprenderás los comandos esenciales usados en la terminal (o consola de comandos, o shell), y que son la base en el manejo de cualquier proyecto que tenga bioinformática en él. Así que... manos a la obra!.
@@ -684,3 +690,11 @@ Al parecer las proteobacterias si influyen mucho en esta enfermedad. pero bueno,
 
 Recuerda que las funciones tienen manuales, solo debes anteponer un `?` en la función que quieras obtener más información.
 
+Ya que estamos familiarizado con los códigos y el mano de consolas (shell y R), estamos en condiciones de instalar programas fundamentales para el análisis de cualquier proyecto que tenga bioinformática como los que usaremos el día 2 y 3.
+
+## Instalación de Requisitos
+Existen 2 guías de instalación, una para los usuarios de **MacOS** y otra para usurarios de **Linus**.
+
+Para los usuarios de Mac pinchen [este enlace]()
+
+Para los usuarios de Linux pinchen [este enlace]()

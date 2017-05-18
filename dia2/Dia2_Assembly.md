@@ -1,4 +1,9 @@
 ![banner](../images/logocbibhorizontal.png)
+##Microbial Genomics Lab
+
+[Sandro Valenzuela-Diaz](https://github.com/Sanrrone) - [Katterinne Mendez](https://github.com/Katterinne) - [Eduardo Castro-Nallar](https://github.com/ecastron) 
+
+---
 
 # Preprocesamiento de datos propios, Control de calidad. Análisis básicos en R
 ------
