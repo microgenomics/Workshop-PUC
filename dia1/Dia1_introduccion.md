@@ -695,6 +695,6 @@ Ya que estamos familiarizado con los códigos y el mano de consolas (shell y R),
 ## Instalación de Requisitos
 Existen 2 guías de instalación, una para los usuarios de **MacOS** y otra para usurarios de **Linus**.
 
-Para los usuarios de Mac pinchen [este enlace]()
+Para los usuarios de Mac pinchen [este enlace](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/Guide_InstallPrograms_Linux.md)
 
-Para los usuarios de Linux pinchen [este enlace]()
+Para los usuarios de Linux pinchen [este enlace](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/Guide_InstallPrograms_Mac.md)
