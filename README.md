@@ -15,7 +15,10 @@ Bienvenidos al repositorio del taller teórico-práctico de **Bioinformática: s
 
 + [**Teórico**](): Tecnologías de secuenciación masiva.
 + [**Práctico**](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/Dia1_introduccion.md): Introducción a la Terminal y R.
-
+	+ **[Commandos Básicos]()**
+	+ **[Instalación de Requisitos para Linux]()**
+	+ **[Instalación de Requisitos para Mac OS X]()**
+ 
 ### Día 2:
 
 + [**Teórico**](): Fundamentos de ensamblaje de genomas, expresión génica, metagenómica.
