@@ -15,9 +15,9 @@ Bienvenidos al repositorio del taller teórico-práctico de **Bioinformática: s
 
 + [**Teórico**](): Tecnologías de secuenciación masiva.
 + [**Práctico**](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/Dia1_introduccion.md): Introducción a la Terminal y R.
-	+ **[Commandos Básicos]()**
-	+ **[Instalación de Requisitos para Linux]()**
-	+ **[Instalación de Requisitos para Mac OS X]()**
+	+ **[Commandos Básicos](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/GuiaComandosBasicosTerminal.md)**
+	+ **[Instalación de Requisitos para Linux](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/Guide_InstallPrograms_Linux.md)**
+	+ **[Instalación de Requisitos para Mac OS X](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/Guide_InstallPrograms_Mac.md)**
  
 ### Día 2:
 
@@ -28,3 +28,7 @@ Bienvenidos al repositorio del taller teórico-práctico de **Bioinformática: s
 
 + [**Teórico**](): Fundamentos de técnicas de representación reducida del genoma (GBS, RADSeq, exome sequencing).
 + [**Práctico**](https://github.com/microgenomics/Workshop-PUC/blob/master/dia3/Dia3_RAD-seq.md): Procesamiento de datos propios.
+
+---
+
+![bot](https://github.com/microgenomics/Workshop-PUC/blob/master/images/huincha.jpg?raw=true)
