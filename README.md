@@ -13,7 +13,7 @@ Bienvenidos al repositorio del taller teórico-práctico de **Bioinformática: s
 
 ### Día 1: 
 
-+ [**Teórico**](): Tecnologías de secuenciación masiva.
++ [**Teórico**](https://www.dropbox.com/s/w8f1y69ppadcdfp/d%C3%ADa01.key?dl=1): Tecnologías de secuenciación masiva.
 + [**Práctico**](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/Dia1_introduccion.md): Introducción a la Terminal y R.
 	+ **[Commandos Básicos](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/GuiaComandosBasicosTerminal.md)**
 	+ **[Instalación de Requisitos para Linux](https://github.com/microgenomics/Workshop-PUC/blob/master/dia1/Guide_InstallPrograms_Linux.md)**
