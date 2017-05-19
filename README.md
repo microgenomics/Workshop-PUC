@@ -21,7 +21,7 @@ Bienvenidos al repositorio del taller teórico-práctico de **Bioinformática: s
  
 ### Día 2:
 
-+ [**Teórico**](): Fundamentos de ensamblaje de genomas, expresión génica, metagenómica.
++ [**Teórico**](https://www.dropbox.com/s/czbxy0evk92t7w8/d%C3%ADa02.key?dl=1): Fundamentos de ensamblaje de genomas, expresión génica, metagenómica.
 + [**Práctico**](https://github.com/microgenomics/Workshop-PUC/blob/master/dia2/Dia2_Assembly.md): Preprocesamiento de datos propios, Control de calidad. Análisis básicos en R.
 
 ### Día 3:
