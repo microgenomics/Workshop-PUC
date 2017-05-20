@@ -32,95 +32,6 @@
 
 ---
 
-### Instalar stacks
-
-#### Mac
-
-	$ brew install stacks
-	$ cpan install Bundle::DBI
-
-#### Linux
-
-Descarga Stacks [aquí](http://catchenlab.life.illinois.edu/stacks/)
-
-	$ sudo apt-get install libdbd-mysql-perl
-	$ sudo apt-get install libsparsehash-dev
-	
-	$ tar xfvz stacks-x.xx.tar.gz
-	$ cd stacks-x.xx
-	$ ./configure
-	$ make
-	$ make install
-
-### Instalar [MySQL](https://dev.mysql.com)
-
-#### Mac
-
-Descarga el DMG de MySQL desde la [página](https://dev.mysql.com/downloads/mysql/) o [aquí]().
-
-Haz doble clic en el archivo DMG y sigue las instrucciónes, pon atención en el mensaje que aparecerá durante la instalación de MySQL, como el que se muestra en la siguiente imágen, y toma nota de la contraseña que aparece, la necesitarás mas adelante.
-
-![mysql_installer](https://github.com/microgenomics/Workshop-PUC/blob/master/images/mysql_installer.png?raw=true)
-
-Ahora dirígete a `System Preferences` -> `MySQL` y haz clic en `Start MySQL Server`, deberías ver algo así:
-
-![mysql_start](https://github.com/microgenomics/Workshop-PUC/blob/master/images/mysql.png?raw=true)
-
-Ahora abre la terminal y escribe...
-
-	$ mysql -u root -p
-	# Aparecerá un mensaje pidiendo una contraseña, la misma que el instalador de MySQL te dió en el paso anterior.
-	$ Enter password: XoryZ!lea3/y
-	# Verás algo así...
-	
-	Welcome to the MySQL monitor.  Commands end with ; or \g.
-	Your MySQL connection id is 194
-	Server version: 5.7.18 MySQL Community Server (GPL)
-	
-	Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.
-	
-	Oracle is a registered trademark of Oracle Corporation and/or its
-	affiliates. Other names may be trademarks of their respective owners.
-
-	Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-	
-	mysql> 
-	
-	# La contraseña que nos entrego el instalador de MySQL es temporal, por lo que debemos cambiarla...
-	# Aún en mysql escribe la siguiente línea de comando para cambiar la contraseña por cualquier otra de tu elección...
-	$ mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyPassword';
-	# Asegúrate de reemplazar MyPassword por tu nueva contraseña
-	# Para salir de mysql escribe:
-	$ quit;
-	
-	# Puedes volver a entrar a mysql, esta vez, escribiendo tu nueva contraseña, para asegurar que el cambio fue exitoso!
-	# Siempre que quieras entrar a mysql escribe:
-	$ mysql -u root -p
-	# Y luego escribes tu contraseña (asegurate de no olvidarla!)
-	# Para salir de mysql escribe:
-	$ mysql> quit;
-
-Excelente! `MySQL` está disponible en tu computadora. Sólo nos hace falta modificar un archivo de configuración, para que `Stacks` pueda acceder a `mysql`:
-
-	$ cd /usr/local/Cellar/stacks/1.46/share/stacks/sql/
-	$ mv mysql.cnf.dist mysql.cnf
-	$ vi mysql.cnf
-	# Se abrirá el archivo mysql, presiona la tecla i para poder editar, verás algo así...
-	
-	[client]
-	user=root
-	password=XoryZ!lea3/y
-	host=localhost
-	port=3306
-	local-infile=1
-	
-	# En 'password=' cambia la antigua contraseña por la nueva contraseña
-	$ cd
-
-Listo!
-
----
-
 ## Manos a la obra !!
 
 ### Archivos de entrada (*input*)
@@ -431,7 +342,7 @@ Recuerda revisar detalladamente las opciónes disponibles de los programas `ref_
 
 #### ref_map.pl
 
-Primero, debes crear un mapa poblacional, éste es un archivo de texto con dos columnas: el nombre de la muestra en la primera columna y la población a la que corresponde. Sino le proporcionamos el mapa poblacional al programa, éste asumirá que todas las muestras pertenecen a la misma población.
+Primero, debes crear un mapa poblacional, éste es un archivo de texto con dos columnas: el nombre de la muestra en la primera columna y la población a la que corresponde en la segunda columna. Sino le proporcionamos el mapa poblacional al programa, éste asumirá que todas las muestras pertenecen a la misma población.
 
 Para los datos ejemplo, el mapa poblacional es el siguiente:
 
@@ -454,6 +365,65 @@ Para los datos ejemplo, el mapa poblacional es el siguiente:
 	wc_1218-07	wc
 	wc_1221-02	wc
 
-... puedes descargarlo [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia3/population_map.zip).
+... puedes descargar éste archivo [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia3/population_map.zip).
+
+Ahora vamos a correr el programa `ref_map.pl`. Recuerda que es **MUY IMPORTANTE** que adaptes los parámetros del programa a tus datos. Para setear los parámetros correctos lee las opciónes disponibles [aquí](http://catchenlab.life.illinois.edu/stacks/comp/ref_map.php) o usa la opción `-h`: `$ ref_map.pl -h`.
+
+Con los datos ejemplo usamos la siguiente línea de commando:
+
+	$ ref_map.pl -b 1 -o . -O population_map -T 6 --samples ../mapp/ -B ref_catalog1 -D "Ref datos ejemplo catalog1" --create_db -X "populations:--structure" -X "populations:--write_single_snp" -X "populations:--ordered_export" -X "populations:--phylip"
+
+El catálogo se crea solo una vez por set de datos. Si es la primera vez que procesas un cierto set de datos, debes usar las opciónes `-B` y `--create_db` para nombrar y crear la base de datos (catálogo de *loci*). Si corres por segunda vez un mismo set de datos, no necesitas crear nuevamente la base de datos, entonces solo usa la opción `-B` para indicar el nombre de la base de datos existente a usar.
+
+Cuando corres `ref_map.pl` por segunda, tercera, etc. vez, usa el comando `-b` para asignarle un numero a cada corrida, así tus resultados no se sobre-escribirán. Usa `-b 1`, `-b 2`, `-b 3`, etc.
+
+Dependiendo de la cantidad y tamaño de tus *inputs* el programa `ref_map.pl` tomará tiempo para completar el proceso... se paciente y aseguráte que tu computador no entre en suspensión automáticamente.
+
+Úsa las opciónes `-X "populations:--structure" "populations:--write_single_snp" "populations:--ordered_export"` para agregar parámetros del programa `populations` necesarias para generar *outputs* adecuados para posteriormente usar el programa `STRUCTURE` o la opción `-X "populations:--phylip"` para hacer la filogenia.
+
+Una vez finalizado `ref_map.pl` habrá generado varios *outputs* para otros programas que revisaremos mas adelante.
 
 #### denovo_map.pl
+
+Primero, debes crear un mapa poblacional, éste es un archivo de texto con dos columnas: el nombre de la muestra en la primera columna y la población a la que corresponde en la segunda columna. Sino le proporcionamos el mapa poblacional al programa, éste asumirá que todas las muestras pertenecen a la misma población.
+
+Para los datos ejemplo, el mapa poblacional es el siguiente:
+
+	cr_1533-05	cr
+	cr_1533-17	cr
+	cs_1335-17	cs
+	cs_1335-54	cs
+	ms_2067-51	ms
+	ms_2067-66	ms
+	pcr_1211-11	pcr
+	pcr_1312-13	pcr
+	pl_1537-11	pl
+	pl_1537-27	pl
+	rb_2240-128	rb
+	rb_2240-158	rb
+	sj_1879-31	sj
+	sj_1879-34	sj
+	stl_1274-63	stl
+	stl_1274-72	stl
+	wc_1218-07	wc
+	wc_1221-02	wc
+
+... puedes descargar éste archivo [aquí](https://github.com/microgenomics/Workshop-PUC/raw/master/dia3/population_map.zip).
+
+Ahora vamos a correr el programa `denovo_map.pl`. Recuerda que es **MUY IMPORTANTE** que adaptes los parámetros del programa a tus datos. Para setear los parámetros correctos lee las opciónes disponibles [aquí](http://catchenlab.life.illinois.edu/stacks/comp/denovo_map.php) o usa la opción `-h`: `$ denovo_map.pl -h`.
+
+Con los datos ejemplo usamos la siguiente línea de commando:
+
+	$ denovo_map.pl -b 1 -o . -O population_map -T 6 --samples ../etapa_1/ -m 3 -M 3 -n 2 -B denovo_catalog1 -D "de_novo datos ejemplo catalog1 m:3 M:3 n:2" --create_db -X "populations:--structure" -X "populations:--phylip" -X "populations:--vcf" -X "populations:--vcf_haplotypes" -X "populations:--log_fst_comp"
+
+El catálogo se crea solo una vez por set de datos. Si es la primera vez que procesas un cierto set de datos, debes usar las opciónes `-B` y `--create_db` para nombrar y crear la base de datos (catálogo de *loci*). Si corres por segunda vez un mismo set de datos, no necesitas crear nuevamente la base de datos, entonces solo usa la opción `-B` para indicar el nombre de la base de datos existente a usar.
+
+Cuando corres `denovo_map.pl` por segunda, tercera, etc. vez, usa el comando `-b` para asignarle un numero a cada corrida, así tus resultados no se sobre-escribirán. Usa `-b 1`, `-b 2`, `-b 3`, etc.
+
+Úsa las opciónes `-X "populations:--structure" -X "populations:--phylip" -X "populations:--vcf" -X "populations:--vcf_haplotypes" -X "populations:--log_fst_comp"` para agregar parámetros del programa `populations` necesarias para generar *outputs* adecuados para posteriormente usar el programa `STRUCTURE` o la opción `-X "populations:--phylip"` para hacer la filogenia, entre otros.
+
+Dependiendo de la cantidad y tamaño de tus *inputs* el programa `denovo_map.pl` tomará tiempo para completar el proceso, recuerda que además debe realizar el ensamble *de novo*... se paciente y aseguráte que tu computador no entre en suspensión automáticamente.
+
+Una vez finalizado `denovo_map.pl` habrá generado varios *outputs* para otros programas que revisaremos en la siguiente sección.
+
+
