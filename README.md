@@ -28,7 +28,7 @@ Bienvenidos al repositorio del taller teórico-práctico de **Bioinformática: s
 
 + [**Teórico**](https://www.dropbox.com/s/pe4ekfohge81aed/d%C3%ADa03.key?dl=1): Fundamentos de técnicas de representación reducida del genoma (GBS, RADSeq, exome sequencing). [PDF](https://www.dropbox.com/s/kg2lx02ad5zbsv6/d%C3%ADa03.pdf?dl=1)
 + [**Práctico**](https://github.com/microgenomics/Workshop-PUC/blob/master/dia3/Dia3_RAD-seq.md): Procesamiento de datos propios.
-
++ [**Práctico alternativo**](https://f1000research.com/articles/4-1070/v2): Este es un práctico alternativo para los participantes interesados en análisis de datos de RNASeq. Pueden trabajar desde Windows sin problemas ya que se trabaja completamente desde la plataforma [R](https://www.r-project.org), [RStudio](https://www.rstudio.com) y [Bioconductor](https://www.bioconductor.org). Les recomendamos comenzar desde la sección "*Starting from SummarizedExperiment*".  
 ---
 
 ![bot](https://github.com/microgenomics/Workshop-PUC/blob/master/images/huincha.jpg?raw=true)
