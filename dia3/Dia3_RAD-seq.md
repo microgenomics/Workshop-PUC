@@ -373,6 +373,9 @@ Con los datos ejemplo usamos la siguiente línea de commando:
 
 	$ ref_map.pl -b 1 -o . -O population_map -T 6 --samples ../mapp/ -B ref_catalog1 -D "Ref datos ejemplo catalog1" --create_db -X "populations:--structure" -X "populations:--write_single_snp" -X "populations:--ordered_export" -X "populations:--phylip"
 
+![run_refmap1](https://github.com/microgenomics/Workshop-PUC/blob/master/images/run_refmap1.png?raw=true)
+![run_refmap2](https://github.com/microgenomics/Workshop-PUC/blob/master/images/run_refmap2.png?raw=true)
+
 El catálogo se crea solo una vez por set de datos. Si es la primera vez que procesas un cierto set de datos, debes usar las opciónes `-B` y `--create_db` para nombrar y crear la base de datos (catálogo de *loci*). Si corres por segunda vez un mismo set de datos, no necesitas crear nuevamente la base de datos, entonces solo usa la opción `-B` para indicar el nombre de la base de datos existente a usar.
 
 Cuando corres `ref_map.pl` por segunda, tercera, etc. vez, usa el comando `-b` para asignarle un numero a cada corrida, así tus resultados no se sobre-escribirán. Usa `-b 1`, `-b 2`, `-b 3`, etc.
@@ -416,6 +419,9 @@ Con los datos ejemplo usamos la siguiente línea de commando:
 
 	$ denovo_map.pl -b 1 -o . -O population_map -T 6 --samples ../etapa_1/ -m 3 -M 3 -n 2 -B denovo_catalog1 -D "de_novo datos ejemplo catalog1 m:3 M:3 n:2" --create_db -X "populations:--structure" -X "populations:--phylip" -X "populations:--vcf" -X "populations:--vcf_haplotypes" -X "populations:--log_fst_comp"
 
+![run_denovomap1](https://github.com/microgenomics/Workshop-PUC/blob/master/images/run_denovomap1.png?raw=true)
+![run_denovomap2](https://github.com/microgenomics/Workshop-PUC/blob/master/images/run_denovomap2.png?raw=true)
+
 El catálogo se crea solo una vez por set de datos. Si es la primera vez que procesas un cierto set de datos, debes usar las opciónes `-B` y `--create_db` para nombrar y crear la base de datos (catálogo de *loci*). Si corres por segunda vez un mismo set de datos, no necesitas crear nuevamente la base de datos, entonces solo usa la opción `-B` para indicar el nombre de la base de datos existente a usar.
 
 Cuando corres `denovo_map.pl` por segunda, tercera, etc. vez, usa el comando `-b` para asignarle un numero a cada corrida, así tus resultados no se sobre-escribirán. Usa `-b 1`, `-b 2`, `-b 3`, etc.
@@ -425,5 +431,9 @@ Cuando corres `denovo_map.pl` por segunda, tercera, etc. vez, usa el comando `-b
 Dependiendo de la cantidad y tamaño de tus *inputs* el programa `denovo_map.pl` tomará tiempo para completar el proceso, recuerda que además debe realizar el ensamble *de novo*... se paciente y aseguráte que tu computador no entre en suspensión automáticamente.
 
 Una vez finalizado `denovo_map.pl` habrá generado varios *outputs* para otros programas que revisaremos en la siguiente sección.
+
+## Análisis de Resultados
+
+### STRUCTURE
 
 
