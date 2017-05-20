@@ -434,6 +434,10 @@ Una vez finalizado `denovo_map.pl` habrá generado varios *outputs* para otros p
 
 ## Análisis de Resultados
 
+Al finalizar la pipeline `Stacks`, dependiendo de los parámetros que seteaste, obtienes varios *outputs* (archivos de salida) que son los *inputs* (archivos de entrada) útiles para varios programas y softwares de análisis para la interpretación de tus resultados, por ejemplo, para cálculo de Fst, diversidad nucleotídica, construcción de filogenia, genotipificación, etc. A continuación verémos brevemente uno de ellos.
+
 ### STRUCTURE
 
+[Structure](http://web.stanford.edu/group/pritchardlab/structure.html) es un software útil para analizar datos de genotipado e inferir la presencia de poblaciones diferentes, asignación de individuos a poblaciones, frecuencia de alelos, etc. Para instalar `Structure` descarguen el programa correspondiente a su sistema operativo [aquí](http://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html) y sigue las instrucciónes de instalación [aquí](http://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/install.html).
 
+![structure](https://github.com/microgenomics/Workshop-PUC/blob/master/images/structure3.png?raw=true)
