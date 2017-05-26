@@ -24,7 +24,6 @@ phyob<-phyloseq(otu, tax,metad)#finally make phyloseq object
 plot_bar(phyob, fill = "Phylum")
 plot_bar(phyob, "Phylum",fill = "Phylum", facet_grid =~host_disease)
 
-phydist<-distance(phyob,"jaccard")
-phyord<-ordinate(phyob, "MDS", distance = phydist)
+ig<-make_network(phyob, distance="jaccard", type = "taxa") #max.dist=0.4 default
+plot_network(ig, phyob, type = "taxa", color = "Phylum")
 
-plot_ordination(phyob, phyord, type = "sample",color = "host_disease")
